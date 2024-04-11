@@ -1,0 +1,42 @@
+@import './lib';
+@import '../../shared';
+
+.widget {
+  position: relative;
+  display: inline-flex;
+
+  &::after {
+    content: 'arrow_drop_down';
+    @include material-icons;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--color-ink-2);
+  }
+
+  &:not([disabled]):hover select {
+    background-color: var(--color-background-hover);
+  }
+
+  &:not([disabled]):active select {
+    background-color: var(--color-background-active);
+  }
+
+  select {
+    @include primitiveInputStyle;
+    @include primitiveInputTextStyle;
+    cursor: pointer;
+    padding-right: 24px;
+    height: 100%;
+
+    option {
+      background-color: var(--color-background-popup);
+    }
+  }
+
+  &.borderless select {
+    box-shadow: none;
+  }
+}

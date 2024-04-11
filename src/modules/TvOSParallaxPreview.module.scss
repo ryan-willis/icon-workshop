@@ -1,0 +1,78 @@
+.container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  touch-action: none;
+  user-select: none;
+}
+
+.layers {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0) scale(var(--scale, 1));
+  width: 400px;
+  height: 240px;
+}
+
+.layer,
+.shine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  will-change: transform;
+  transform:
+    perspective(500px)
+    scale(.9);
+  transition: filter .6s ease, transform .8s cubic-bezier(0.2, 0, 0, 1);
+
+  &:first-child {
+    filter: drop-shadow(0 5px 6px rgba(0,0,0,.3));
+  }
+
+  .container.isPointerActive & {
+    // --depth is expected to be between 0 and 1
+    transform:
+      perspective(500px)
+      translate(
+        calc((10px - 3px * var(--depth)) * var(--mx)),
+        calc((10px - 3px * var(--depth)) * var(--my)),)
+      rotateY(calc(-5deg * var(--mx)))
+      rotateX(calc(5deg * var(--my)))
+      translateZ(calc(15px * var(--depth)));
+    transition: filter .15s ease, transform .1s ease;
+
+    &:first-child {
+      filter: drop-shadow(0 30px 20px rgba(0,0,0,.3));
+    }
+  }
+}
+
+.shine {
+  --depth: 0;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--mx) * 100% + 50%);
+    top: calc(var(--my) * 100% - 30%);
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    filter: blur(80px);
+    transform: translate(-50%, -50%);
+    background-color: white;
+
+    opacity: 0;
+    transition: opacity .6s ease;
+
+    .container.isPointerActive & {
+      opacity: .3;
+      transition: opacity .15s ease;
+    }
+  }
+}

@@ -1,0 +1,81 @@
+@import '../shared';
+
+.field {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+
+  input::-webkit-calendar-picker-indicator {
+    display: none !important; // hard override useragent
+    appearance: none;
+  }
+}
+
+.autocompleteMenu {
+  position: fixed;
+  background-color: var(--color-background-popup);
+  padding: 8px 0;
+  margin: 0;
+  border-radius: 8px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow:
+      0 0 0 1px var(--color-border),
+      0 4px 12px rgba(#000, .12);
+  color: var(--color-ink);
+  z-index: 2;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  animation: popup-menu-enter .15s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: 50% 0%;
+  overflow-y: scroll;
+  max-height: 200px;
+
+  @keyframes popup-menu-enter {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); }
+  }
+}
+
+.item {
+  width: 100%;
+  text-align: left;
+  background-color: transparent;
+  appearance: none;
+  border: 0;
+  font-family: $fontStack;
+  @include type-body;
+  cursor: pointer;
+  color: var(--color-ink);
+  padding: 2px 20px;
+  display: flex;
+  align-items: center;
+  line-height: 28px;
+  outline-offset: -2px !important;
+
+  .family {
+    flex: 2 0 0;
+    min-width: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .preview {
+    flex: 1 0 0;
+    min-width: 0;
+    font-size: 20px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &:not([disabled]):hover {
+    background-color: var(--color-background-hover);
+  }
+  &:not([disabled]):active {
+    background-color: var(--color-background-active);
+  }
+}

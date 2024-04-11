@@ -1,0 +1,50 @@
+@import '../../shared';
+
+.widget {
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  border-radius: 4px;
+  display: inline-flex;
+  flex-direction: row;
+  min-width: min-content;
+  position: relative;
+
+  &:focus-within {
+    @include focus-outline;
+  }
+
+  > label {
+    &.isSelected {
+      box-shadow: 0 0 0 1px var(--color-accent) inset;
+      background-color: var(--color-accent-tonal);
+      color: var(--color-accent);
+    }
+
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    height: 24px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    flex: 0 0 auto;
+
+    &:not(.isSelected):hover {
+      background-color: var(--color-background-hover);
+    }
+    &:not(.isSelected):active {
+      background-color: var(--color-background-active);
+    }
+  }
+
+  input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+}

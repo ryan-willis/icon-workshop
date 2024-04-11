@@ -1,0 +1,31 @@
+@import '../../shared';
+
+$primitiveInputSidePadding: 8px;
+
+@mixin primitiveInputStyle {
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  border-radius: 4px;
+  outline: 0;
+  border: 0;
+  height: 24px;
+  box-sizing: border-box;
+  padding: 0 $primitiveInputSidePadding;
+  appearance: none;
+  background-color: transparent;
+  width: 100%;
+  color: var(--color-ink);
+
+  &::placeholder {
+    color: var(--color-ink-placeholder);
+  }
+
+  &:focus {
+    outline: 1px solid var(--color-focus-outline);
+    outline-offset: -1px;
+  }
+}
+
+@mixin primitiveInputTextStyle {
+  font-family: $fontStack;
+  @include type-body-small($lineHeight: 24px);
+}

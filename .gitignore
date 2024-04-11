@@ -1,0 +1,4 @@
+**dist/
+.vscode/
+.DS_*
+node_modules/

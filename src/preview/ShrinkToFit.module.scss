@@ -1,0 +1,12 @@
+.container {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  width: fit-content;
+}

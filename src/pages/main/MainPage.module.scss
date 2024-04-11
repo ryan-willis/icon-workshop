@@ -1,0 +1,153 @@
+@import '../../shared';
+
+*:focus {
+  outline-color: var(--color-focus-outline);
+}
+
+*:not(input, select):focus {
+  @include focus-outline;
+}
+
+.page {
+  display: grid;
+  grid-template:
+    'header toolbar' auto
+    'editor preview' 1fr / max(288px, var(--split-size)) 1fr;
+  height: 100vh;
+  height: calc(var(--vh) * 100);
+  box-sizing: border-box;
+
+  @include narrow {
+    grid-template:
+      'toolbar' auto
+      'preview' auto
+      'editor' 1fr / 100%;
+  }
+}
+
+.header {
+  grid-area: header;
+  display: flex;
+  position: relative;
+  padding: 0 24px 0 (24px + 52px + 4px);
+  flex-direction: column;
+  justify-content: center;
+
+  @include narrow {
+    display: none;
+  }
+
+  .logo {
+    position: absolute;
+    left: 24px - 6px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 900;
+  }
+
+  .subtitle {
+    margin: 0;
+    @include type-overline;
+    color: var(--color-ink-2);
+  }
+}
+
+.toolbar {
+  grid-area: toolbar;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.propertyEditor {
+  grid-area: editor;
+}
+
+.splitter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+
+  @include narrow {
+    display: none;
+  }
+
+  svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.preview {
+  grid-area: preview;
+  background-color: var(--color-background-2);
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  margin-bottom: 16px;
+  margin-right: 16px;
+  display: grid;
+  place-items: center;
+  position: relative;
+
+  @include narrow {
+    aspect-ratio: 3 / 2;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: 0 0 0 1px var(--color-border);
+  }
+
+  @include narrowShort {
+    aspect-ratio: unset;
+    height: 80px;
+  }
+}
+
+.simplePreview {
+  display: grid;
+  position: relative;
+  padding: 24px;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+.footer {
+  margin-top: 36px;
+  padding-top: 12px;
+  text-align: center;
+  color: var(--color-ink-2);
+  position: relative;
+  @include type-body-small;
+
+  a {
+    color: var(--color-ink-2);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 44px;
+    height: 1px;
+    transform: translateX(-50%);
+    background-color: var(--color-border);
+    opacity: .7;
+  }
+}

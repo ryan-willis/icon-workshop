@@ -1,0 +1,34 @@
+@import '../../shared';
+
+.tooltip {
+  position: fixed;
+  background-color: var(--color-ink);
+  color: var(--color-background);
+  padding: 6px 8px;
+  border-radius: 8px;
+  z-index: 999;
+  pointer-events: none;
+  @include type-body-xsmall(bold);
+  letter-spacing: .25px;
+  text-align: center;
+  white-space: nowrap;
+  transform: translate(-50%, 4px);
+  animation: module-menu-enter .15s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: 50% 0%;
+  will-change: transform;
+
+  @keyframes module-menu-enter {
+    from { transform: translate(-50%, 0px) ; opacity: 0; }
+    to { transform: translate(-50%, 4px) ; }
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    border: 3px solid transparent;
+    border-bottom-color: var(--color-ink);
+    transform: translate(-50%, -100%);
+  }
+}

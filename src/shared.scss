@@ -1,0 +1,74 @@
+@import "./material-icons";
+
+// layout
+
+@mixin notNarrow {
+  @media only screen and (min-width: 600px) {
+    @content;
+  }
+}
+
+@mixin narrow {
+  @media only screen and (max-width: 599px) {
+    @content;
+  }
+}
+
+@mixin narrowShort {
+  @media only screen and (max-width: 599px) and (max-height: 399px) {
+    @content;
+  }
+}
+
+// focus states
+
+@mixin focus-outline {
+  outline: 2px solid var(--color-focus-outline);
+  outline-offset: 2px;
+}
+
+// typography
+
+$fontStack: Inter, sans-serif;
+
+@mixin __type-weight($weight) {
+  @if $weight == bold {
+    font-weight: 700;
+  } @else if $weight == medium {
+    font-weight: 500;
+  } @else {
+    font-weight: 400;
+  }
+}
+
+@mixin __type-size($size, $defaultLineHeight, $overrideLineHeight) {
+  font-size: $size;
+  @if $overrideLineHeight {
+    line-height: $overrideLineHeight;
+  } @else {
+    line-height: $defaultLineHeight;
+  }
+}
+
+@mixin type-body($weight: null, $lineHeight: null) {
+  @include __type-size(13px, 16px, $lineHeight);
+  @include __type-weight($weight);
+}
+
+@mixin type-body-small($weight: null, $lineHeight: null) {
+  @include __type-size(12px, 16px, $lineHeight);
+  @include __type-weight($weight);
+}
+
+@mixin type-body-xsmall($weight: null, $lineHeight: null) {
+  @include __type-size(11px, 12px, $lineHeight);
+  @include __type-weight($weight);
+}
+
+@mixin type-overline {
+  font-size: 10px;
+  line-height: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 900;
+}

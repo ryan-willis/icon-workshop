@@ -1,0 +1,35 @@
+@import './lib';
+
+.widget {
+  display: flex;
+  position: relative;
+  width: 100%;
+
+  input {
+    width: 100%;
+    @include primitiveInputStyle;
+    @include primitiveInputTextStyle;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button {
+    display: none !important; // hard override useragent
+    appearance: none;
+  }
+}
+
+.suffix {
+  position: absolute;
+  left: 0;
+  top: 0;
+  @include primitiveInputTextStyle;
+  padding: 0 $primitiveInputSidePadding;
+  pointer-events: none;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: var(--color-ink-2);
+}
+
+.hidden {
+  visibility: hidden;
+}

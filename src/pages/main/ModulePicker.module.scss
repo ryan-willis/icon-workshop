@@ -1,0 +1,249 @@
+@import '../../shared';
+
+.container {
+  flex: 1 1 0;
+  position: relative;
+  min-width: 0;
+
+  .zeroStateEdu {
+    position: absolute;
+    pointer-events: none;
+    left: 56px;
+    top: calc(100% - 12px);
+    z-index: 1;
+    @include type-body($weight: bold);
+    display: flex;
+    align-items: flex-end;
+
+    @include narrow {
+      left: 28px;
+    }
+
+    span {
+      display: block;
+      margin-left: 8px;
+      transform: translateY(50%);
+    }
+  }
+
+  .leftScrollEdge,
+  .rightScrollEdge {
+    overflow: hidden;
+    width: 24px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      width: 10px;
+      bottom: 8px;
+    }
+  }
+
+  @include notNarrow {
+    .leftScrollEdge {
+      left: 0;
+
+      &::before {
+        left: -10px;
+        box-shadow:
+          1px 0 0 var(--color-border),
+          0 0 8px rgba(#000, .2);
+      }
+    }
+  }
+
+  .rightScrollEdge {
+    right: 0;
+
+    &::before {
+      right: -10px;
+      box-shadow:
+        -1px 0 0 var(--color-border),
+        0 0 8px rgba(#000, .2);
+    }
+  }
+}
+
+.picker {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 16px 0;
+  margin: 0;
+  overflow-x: auto;
+
+  @include narrow {
+    padding-left: 16px;
+  }
+}
+
+.item,
+.addButton {
+  cursor: pointer;
+  width: 128px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  position: relative;
+  flex: 0 0 auto;
+
+  @include narrow {
+    width: auto;
+    height: 40px;
+    border-radius: 9999px;
+  }
+
+  &:not([disabled]):hover {
+    background-color: var(--color-background-hover);
+  }
+  &:not([disabled]):active {
+    background-color: var(--color-background-active);
+  }
+}
+
+.addButton {
+  border: 0;
+  appearance: none;
+  background-color: transparent;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-2);
+  position: relative;
+
+  @include narrow {
+    padding: 0 8px;
+  }
+
+  &.isZeroState {
+    background-color: var(--color-accent);
+    box-shadow: none;
+    color: var(--color-background);
+
+    &:not([disabled]):hover {
+      background-color: var(--color-accent);
+      opacity: .9;
+    }
+    &:not([disabled]):active {
+      background-color: var(--color-accent);
+      opacity: .8;
+    }
+  }
+}
+
+.item {
+  align-items: stretch;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 12px 8px 8px 8px;
+  position: relative;
+
+  input {
+    // hide radio button
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  img {
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    object-fit: scale-down;
+  }
+
+  img,
+  .previewLoading {
+    flex: 1 1 0;
+
+    @include narrow {
+      display: none;
+    }
+  }
+
+  .previewLoading {
+    background-color: var(--color-ink-2);
+    opacity: .1;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    border-radius: 9999px;
+    height: 100%;
+  }
+
+  &.isSelected:focus-within {
+    @include focus-outline;
+  }
+
+  &.isSelected {
+    box-shadow: 0 0 0 2px var(--color-accent) inset;
+
+    .moduleLabel {
+      font-weight: 700;
+      color: var(--color-accent);
+    }
+  }
+
+  .deleteButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 4px;
+    border-radius: 50%;
+    margin: -4px -4px 0 0;
+    appearance: none;
+    cursor: pointer;
+    background-color: var(--color-background);
+    color: var(--color-ink-placeholder);
+    border: 0;
+    display: none;
+
+    &:hover {
+      color: var(--color-ink);
+    }
+
+    :global(.material-icons) {
+      font-size: 16px;
+
+      @include narrow {
+        font-size: 24px;
+      }
+    }
+  }
+
+  &:hover,
+  &:focus-within {
+    .deleteButton {
+      display: flex;
+    }
+  }
+
+  @include narrow {
+    padding: 12px 12px 8px 8px;
+
+    .deleteButton {
+      display: none !important;
+    }
+
+    &.isSelected {
+      padding: 12px 36px 8px 8px;
+
+      .deleteButton {
+        background-color: transparent;
+        display: flex !important;
+        padding: 8px 8px 8px 0;
+        margin: 0;
+      }  
+    }
+  }
+}
+
+.moduleLabel {
+  @include type-body;
+  margin-top: 8px;
+
+  @include narrow {
+    margin: 0 8px;
+  }
+}

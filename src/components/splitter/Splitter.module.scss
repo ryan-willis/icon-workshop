@@ -1,0 +1,28 @@
+.splitter {
+  --splitter-thickness: 12px;
+  background-color: transparent;
+  cursor: ew-resize;
+  top: 0;
+  height: 100%;
+  width: var(--splitter-thickness);
+  fill: var(--color-ink-disabled);
+
+  &:hover {
+    background-color: var(--color-background-hover);
+  }
+
+  &.isDragging {
+    background-color: var(--color-background-active);
+  }
+}
+
+.scrim {
+  z-index: 99999;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  cursor: ew-resize;
+  touch-action: none;
+}

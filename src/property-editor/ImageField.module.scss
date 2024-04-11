@@ -1,0 +1,109 @@
+@import '../shared';
+
+.field {
+  width: 100%;
+  border-radius: 8px;
+  box-sizing: border-box;
+  min-height: 96px;
+  display: flex;
+  position: relative;
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  padding: 16px;
+
+  &.isDropHover {
+    box-shadow: 0 0 0 2px var(--color-accent) inset;
+  }
+
+  &:focus-within {
+    @include focus-outline;
+  }
+
+  &:hover {
+    background-color: var(--color-background-hover);
+  }
+  &:active {
+    background-color: var(--color-background-active);
+  }
+
+  input[type="file"] {
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    appearance: none;
+    opacity: 0;
+    outline: 0;
+    font-size: 0;
+  }
+}
+
+.preview {
+  aspect-ratio: 1 / 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  position: relative;
+  pointer-events: none;
+
+  :global(.material-icons) {
+    color: var(--color-ink-placeholder);
+  }
+
+  &::before {
+    z-index: 0;
+    pointer-events: none;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-ink-2);
+    opacity: .1;
+  }
+
+  img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .previewOverlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }  
+}
+
+.instructions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h3 {
+    margin: 0 0 4px 0;
+    color: var(--color-ink);
+    @include type-body-small($weight: bold);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-ink-2);
+    @include type-body-small;
+  }
+}

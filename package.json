@@ -1,0 +1,57 @@
+{
+  "name": "icon-workshop",
+  "version": "0.0.1",
+  "description": "Produce app icons for any platform",
+  "main": "NONE",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:docker": "vite build && docker build -t ghcr.io/ryan-willis/icon-workshop:latest .",
+    "publish:docker": "docker push ghcr.io/ryan-willis/icon-workshop:latest",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "type-check": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryan-willis/icon-workshop.git"
+  },
+  "keywords": [
+    "app",
+    "icon",
+    "generator",
+    "maker"
+  ],
+  "author": "Ryan Willis <code@ryanwillis.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ryan-willis/icon-workshop/issues"
+  },
+  "homepage": "https://github.com/ryan-willis/icon-workshop#readme",
+  "dependencies": {
+    "base64-js": "^1.5.1",
+    "classnames": "^2.5.1",
+    "fflate": "^0.8.2",
+    "figma-squircle": "^0.3.1",
+    "jszip": "^3.10.1",
+    "react": "^18.2.0",
+    "react-color": "^2.19.3",
+    "react-dom": "^18.2.0",
+    "sass": "^1.74.1",
+    "seedrandom": "^3.0.5",
+    "tinycolor2": "^1.6.0",
+    "webfontloader": "^1.6.28"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.75",
+    "@types/react-color": "^3.0.12",
+    "@types/react-dom": "^18.2.24",
+    "@types/seedrandom": "^3.0.8",
+    "@types/tinycolor2": "^1.4.6",
+    "@types/webfontloader": "^1.6.38",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "vite": "^5.2.8"
+  }
+}

@@ -1,0 +1,61 @@
+@import './shared';
+
+:root {
+  // color tokens
+  $accent: #3d73e8;
+  $ink: #222b44;
+  --color-accent: #{$accent};
+  --color-accent-tonal: #{rgba($accent, .08)};
+  --color-ink: #{$ink};
+  --color-ink-2: #686d7a;
+  --color-ink-placeholder: #868a92;
+  --color-ink-disabled: #b2b4b9;
+  --color-background: #fff;
+  --color-background-hover: #{rgba($ink, .03)};
+  --color-background-active: #{rgba($ink, .06)};
+  --color-background-2: #f4f5f8;
+  --color-background-popup: var(--color-background);
+  --color-border: #dee0e5;
+  --color-focus-outline: #29fff4;
+}
+
+@mixin dark-theme {
+  // color tokens
+  $accent: #2e64d0;
+  --color-accent: #{$accent};
+  --color-accent-tonal: #{rgba($accent, .24)};
+  --color-ink: #fff;
+  --color-ink-2: #e4e0ec;
+  --color-ink-placeholder: #b0b6c7;
+  --color-ink-disabled: #888e9e;
+  --color-background: #22242a;
+  --color-background-hover: #{rgba(#fff, .04)};
+  --color-background-active: #{rgba(#fff, .08)};
+  --color-background-2: #101014;
+  --color-background-popup: var(--color-background-2);
+  --color-border: #444650;
+  --color-focus-outline: #82ffea;
+}
+
+body.dark-theme {
+  @include dark-theme;
+  color-scheme: dark;
+}
+
+body:not(.is-keyboard-mode) {
+  --color-focus-outline: transparent !important;
+}
+
+body {
+  margin: 0;
+  font-family: $fontStack;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-ink);
+  @include type-body;
+}
+
+.material-icons {
+  @include material-icons;
+}

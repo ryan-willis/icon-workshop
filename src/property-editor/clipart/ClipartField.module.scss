@@ -1,0 +1,94 @@
+@import '../../shared';
+
+.field {
+  width: 100%;
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  border-radius: 8px;
+}
+
+.toolbar {
+  box-shadow: 0 -1px 0 var(--color-border) inset;
+  display: flex;
+}
+
+.search {
+  border: 0;
+  padding: 8px 16px;
+  @include type-body;
+  font-family: $fontStack;
+  background-color: transparent;
+  flex: 1 1 0;
+  min-width: 0;
+  outline: 0;
+  color: var(--color-ink);
+
+  &::placeholder {
+    color: var(--color-ink-placeholder);
+  }
+
+  &::-webkit-search-decoration,
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-results-button,
+  &::-webkit-search-results-decoration { display: none; }
+}
+
+.setSelector {
+  flex: 0 0 auto;
+
+  select {
+    text-align: right;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  grid-auto-rows: min-content;
+  overflow-y: scroll;
+  height: 200px;
+  padding: 12px 16px;
+
+  button {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    min-height: 32px;
+    justify-content: center;
+    color: var(--color-ink-2);
+    border-radius: 4px; // for focus outline
+
+    &:hover {
+      color: var(--color-ink);
+    }
+
+    &.isSelected {
+      color: var(--color-accent);
+
+      &::after {
+        content: '';
+        width: 32px;
+        height: 32px;
+        pointer-events: none;
+        background-color: var(--color-accent-tonal);
+        border-radius: 9999px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+      }
+    }
+  }
+}
+
+.noResults {
+  grid-column: 1 / 1000;
+  text-align: center;
+  margin: 16px;
+  color: var(--color-ink-placeholder);
+  @include type-body-small;
+}
