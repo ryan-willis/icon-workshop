@@ -13,7 +13,6 @@ import {
   simpleSquirclePath,
 } from "../imagelib/imageutil";
 import { tryLoadWebFont } from "../property-editor/FontField";
-import { drawTexture } from "../textures";
 import { ICON_SETS } from "../property-editor/clipart/iconsets";
 import {
   Effect,
@@ -40,8 +39,7 @@ export async function renderAppIcon(
 ): Promise<CanvasRenderingContext2D> {
   // let foreSrcCtx = values.foreground ? values.foreground.ctx : null;
   let foreSrcCtx = await renderForeground({ values }, assetSize);
-  let { fgType, fgMask, bgType, bgGradient, bgTexture, fgEffects, fgPadding } =
-    values;
+  let { fgType, fgMask, bgType, bgGradient, fgEffects, fgPadding } = values;
   let bgColor = tinycolor(values.bgColor); // TODO: the system should automatically tinycolor() this
   let fgColor = tinycolor(values.fgColor);
   if (androidMonochrome) {
@@ -217,22 +215,6 @@ export async function renderAppIcon(
     }
   }
 
-  let bgTextureLayer: Layer | null = null;
-  if (bgTexture) {
-    bgTextureLayer = {
-      draw: (ctx) => {
-        // draw center-cropped ("cover" in object-fit terms)
-        ctx.save();
-        ctx.translate(targetRect.x, targetRect.y);
-        let scale = Math.max(targetRect.w, targetRect.h);
-        ctx.translate((targetRect.w - scale) / 2, (targetRect.h - scale) / 2);
-        ctx.scale(scale, scale);
-        drawTexture(ctx, bgTexture);
-        ctx.restore();
-      },
-    };
-  }
-
   let { badge, badgeColor } = values;
   badgeColor = tinycolor(badgeColor);
 
@@ -240,7 +222,6 @@ export async function renderAppIcon(
     children: [
       (layer === "all" || layer === "background") && backgroundLayer,
       (layer === "all" || layer === "background") && bgImageLayer,
-      (layer === "all" || layer === "background") && bgTextureLayer,
       (layer === "all" || layer === "foreground") && foregroundLayer,
       fgEffects === "score" &&
         layer !== "background" && {

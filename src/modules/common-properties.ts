@@ -150,11 +150,6 @@ export const commonAppIconBackgroundPropertyGroup: PropertyGroup = {
       </svg>`,
       depends: (values) => values.bgType === "image",
     },
-    {
-      id: "bgTexture",
-      title: "Texture",
-      type: "texture",
-    },
   ],
 };
 

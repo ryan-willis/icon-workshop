@@ -63,12 +63,6 @@ export interface RenderConfig {
   androidMonochrome?: boolean;
 }
 
-export interface TextureValue {
-  texture: string;
-  seed: string;
-  color: string;
-}
-
 export interface GenerateContext {
   rawValues?: any;
   modules?: any;
@@ -92,7 +86,6 @@ export interface GenerateContext {
     filename?: string;
     themed?: boolean;
     bgGradient?: GradientValue;
-    bgTexture?: TextureValue;
     fgEffects?: string | null;
     fgPadding?: {
       top: number;

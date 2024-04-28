@@ -12,7 +12,6 @@ import { ImageField } from "./ImageField";
 import { PaddingField } from "./PaddingField";
 import styles from "./PropertyEditor.module.scss";
 import { TextField } from "./TextField";
-import { TextureField } from "./TextureField";
 import { GenerateContext, PropertyModel } from "../imagelib/types";
 
 const COMPONENT_MAP: Record<string, FC<any>> = {
@@ -24,7 +23,6 @@ const COMPONENT_MAP: Record<string, FC<any>> = {
   image: ImageField,
   boolean: BooleanField,
   padding: PaddingField,
-  texture: TextureField,
   gradient: GradientField,
 };
 

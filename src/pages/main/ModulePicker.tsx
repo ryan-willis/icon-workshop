@@ -90,15 +90,17 @@ export const ModulePicker: FC<ModulePickerProps> = ({
             </label>
           );
         })}
-        <button
-          className={cn(styles.addButton, {
-            [styles.isZeroState]: !modules.length,
-          })}
-          onClick={(ev) => showMenu(ev)}
-          aria-label="Add target"
-        >
-          <i className="material-icons">add</i>
-        </button>
+        {modules.length < ALL_MODULES.length && (
+          <button
+            className={cn(styles.addButton, {
+              [styles.isZeroState]: !modules.length,
+            })}
+            onClick={(ev) => showMenu(ev)}
+            aria-label="Add target"
+          >
+            <i className="material-icons">add</i>
+          </button>
+        )}
         {menuState && (
           <PopupMenu
             show

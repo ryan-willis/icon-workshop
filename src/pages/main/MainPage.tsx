@@ -208,17 +208,6 @@ const MainPageInner: FC = () => {
           className={styles.propertyEditor}
           module={activeModule}
         />
-        // <footer className={styles.footer}>
-        //   Made by{" "}
-        //   <a
-        //     href="https://github.com/ryan-willis"
-        //     rel="noreferrer"
-        //     target="_blank"
-        //   >
-        //     @ryan-willis
-        //   </a>
-        // </footer>
-        // </PropertyEditor>
       )}
       <Preview module={activeModule} darkTheme={darkTheme}>
         <Splitter

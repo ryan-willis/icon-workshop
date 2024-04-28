@@ -17,7 +17,7 @@ const FG_HEIGHT = 500;
 
 export const PlayStoreModule = new (class extends BaseModule {
   type = "play-store";
-  label = "Play Store Banner (Beta)";
+  label = "Play Store Banner";
 
   requires = ["android"];
 
