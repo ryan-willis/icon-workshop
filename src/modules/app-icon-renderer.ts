@@ -224,13 +224,6 @@ export async function renderAppIcon(
       (layer === "all" || layer === "background") && backgroundLayer,
       (layer === "all" || layer === "background") && bgImageLayer,
       (layer === "all" || layer === "foreground") && foregroundLayer,
-      fgEffects === "score" &&
-        layer !== "background" && {
-          draw: (ctx: CanvasRenderingContext2D) => {
-            ctx.fillStyle = "rgba(0, 0, 0, .1)";
-            ctx.fillRect(0, 0, assetSize.w, assetSize.h / 2);
-          },
-        },
       badge &&
         (layer === "all" || layer === "foreground") && {
           draw: (ctx: CanvasRenderingContext2D) => {

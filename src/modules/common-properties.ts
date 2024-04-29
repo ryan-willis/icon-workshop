@@ -95,7 +95,6 @@ export const commonAppIconForegroundPropertyGroup: PropertyGroup = {
         ["", "None"],
         ["elevate", "Drop shadow"],
         ["shadow", "Cast shadow"],
-        ["score", "Score"],
       ],
     },
     {

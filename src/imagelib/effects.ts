@@ -19,7 +19,7 @@ import { makeContext } from "./drawing";
 import { Effect, Size } from "./types";
 
 const OUTER_EFFECTS = new Set(["outer-shadow", "cast-shadow"]);
-const INNER_EFFECTS = new Set(["inner-shadow", "score"]);
+const INNER_EFFECTS = new Set(["inner-shadow"]);
 const FILL_EFFECTS = new Set([
   "fill-color",
   "fill-lineargradient",
