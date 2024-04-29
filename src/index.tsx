@@ -4,7 +4,7 @@ import App from "./App";
 
 // do this at the root to avoid flash of un-layout'd content
 (() => {
-  let update = () =>
+  const update = () =>
     document.documentElement.style.setProperty(
       "--vh",
       `${window.innerHeight / 100}px`

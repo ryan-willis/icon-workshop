@@ -14,13 +14,13 @@ export const OS_TYPES = {
 };
 
 export function makeIcns(canvases: HTMLCanvasElement[]) {
-  let images: Uint8ClampedArray[] = [];
-  for (let canvas of canvases) {
-    let w = canvas.width as keyof typeof OS_TYPES;
-    let dataUrl = canvas.toDataURL();
-    let data = window.atob(dataUrl.replace(/^(.*?);base64,/, ""));
+  const images: Uint8ClampedArray[] = [];
+  for (const canvas of canvases) {
+    const w = canvas.width as keyof typeof OS_TYPES;
+    const dataUrl = canvas.toDataURL();
+    const data = window.atob(dataUrl.replace(/^(.*?);base64,/, ""));
 
-    for (let osType of OS_TYPES[w] || []) {
+    for (const osType of OS_TYPES[w] || []) {
       images.push(createPNGBuffer(osType, data));
     }
   }
@@ -42,7 +42,7 @@ function createHeader(totalSize: number) {
 }
 
 function createPNGBuffer(osType: string, imageBytes: string) {
-  let totalSize = imageBytes.length + 8;
+  const totalSize = imageBytes.length + 8;
   const buf = bufferAlloc(totalSize);
   writeAscii(buf, 0, osType);
   writeUInt32BE(buf, 4, totalSize);
@@ -53,11 +53,11 @@ function createPNGBuffer(osType: string, imageBytes: string) {
 }
 
 function mergedArrays(arrs: Uint8ClampedArray[]) {
-  let totalSize = arrs.reduce((s, a) => s + a.length, 0);
-  let buf = bufferAlloc(totalSize);
+  const totalSize = arrs.reduce((s, a) => s + a.length, 0);
+  const buf = bufferAlloc(totalSize);
   let pos = 0;
   for (let i = 0; i < arrs.length; i++) {
-    let arr = arrs[i];
+    const arr = arrs[i];
     buf.set(arr, pos);
     pos += arr.length;
   }

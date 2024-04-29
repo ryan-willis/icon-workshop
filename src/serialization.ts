@@ -5,7 +5,7 @@ const ENC = new TextEncoder();
 const DEC = new TextDecoder();
 
 interface IconDocument {
-  values: { [key: string]: any };
+  values: { [key: string]: Record<string, string | boolean> };
   modules: string[];
 }
 
@@ -13,11 +13,11 @@ export function documentToUrl(doc: IconDocument): string {
   doc = JSON.parse(JSON.stringify(doc));
 
   // TODO: somehow persist the blobs?
-  for (let key in doc.values) {
-    let val = doc.values[key];
+  for (const key in doc.values) {
+    const val = doc.values[key];
     if (!!val.filterBlobs) {
-      for (let subKey in val) {
-        let subVal = val[subKey];
+      for (const subKey in val) {
+        const subVal = val[subKey];
         if (String(subVal).startsWith("blob:")) {
           delete doc.values[key];
         }

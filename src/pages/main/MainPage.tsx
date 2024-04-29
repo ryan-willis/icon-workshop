@@ -27,6 +27,8 @@ import DownloadCheckAnimation from "./images/sprite-download-check-white@2x.png"
 import styles from "./MainPage.module.scss";
 import { ModulePicker } from "./ModulePicker";
 import { LogoImage } from "./images/logo";
+import { BaseModule } from "../../base-module";
+import { Artifact } from "../../imagelib/types";
 
 export const MainPage: FC = (props) => {
   return (
@@ -37,38 +39,38 @@ export const MainPage: FC = (props) => {
 };
 
 const MainPageInner: FC = () => {
-  let [darkTheme, setDarkTheme] = useState(
+  const [darkTheme, setDarkTheme] = useState(
     window.localStorage.darkTheme !== "false"
   );
-  let [activeModule, setActiveModule] = useState<any>(null);
-  let context = useContext(DocumentContext);
-  let { rawValues, setAllValues, set, setModules } = context;
-  let [isGeneratingZip, setGeneratingZip] = useState(false);
-  let [animateDownloadIcon, setAnimateDownloadIcon] = useState(false);
-  let [splitSize, setSplitSize] = useState(30);
-  let [isConfirmingCopy, confirmCopy, clearConfirmCopy] =
+  const [activeModule, setActiveModule] = useState<BaseModule>();
+  const context = useContext(DocumentContext);
+  const { rawValues, setAllValues, set, setModules } = context;
+  const [isGeneratingZip, setGeneratingZip] = useState(false);
+  const [animateDownloadIcon, setAnimateDownloadIcon] = useState(false);
+  const [splitSize, setSplitSize] = useState(30);
+  const [isConfirmingCopy, confirmCopy, clearConfirmCopy] =
     useTimedConfirmation(3000);
-  let isNarrow = useMediaQuery("(max-width: 599px)");
+  const isNarrow = useMediaQuery("(max-width: 599px)");
 
   useKeyboardMode(document.body, "is-keyboard-mode");
 
-  let { modules } = context;
+  const { modules } = context;
 
   // path handling
   // TODO: refactor to react-router
   useLayoutEffect(() => {
-    let path = document.location.pathname.replace(/^\/i\//, "");
+    const path = document.location.pathname.replace(/^\/i\//, "");
     if (!path || path === "/") {
       return;
     }
     try {
-      let { values, modules: moduleTypes } = documentFromUrl(path);
+      const { values, modules: moduleTypes } = documentFromUrl(path);
       setAllValues(values);
-      let modules = moduleTypes
+      const modules = moduleTypes
         .map((type) => ALL_MODULES.find((m) => m.type === type))
         .filter((m) => !!m);
       setModules(modules);
-      setTimeout(() => setActiveModule(modules[0]));
+      setTimeout(() => setActiveModule(modules[0] as BaseModule));
     } catch (e) {
       console.warn("Invalid path, starting from scratch.");
     }
@@ -77,9 +79,9 @@ const MainPageInner: FC = () => {
   useAsyncDebouncedEffect(
     async () => {
       if (Object.keys(rawValues).length > 0) {
-        let hash = `/i/${documentToUrl({
+        const hash = `/i/${documentToUrl({
           values: rawValues,
-          modules: modules.map(({ type }: any) => type),
+          modules: modules.map(({ type }: { type: string }) => type),
         })}`;
         window.history.replaceState(null, "", hash);
       }
@@ -96,11 +98,11 @@ const MainPageInner: FC = () => {
 
   useEffect(() => {
     // swallow up accidental drops
-    let el = document.body;
-    let onDrop = (ev: DragEvent) => {
+    const el = document.body;
+    const onDrop = (ev: DragEvent) => {
       ev.preventDefault();
     };
-    let onDragOver = (ev: DragEvent) => {
+    const onDragOver = (ev: DragEvent) => {
       ev.preventDefault();
     };
     el.addEventListener("dragover", onDragOver);
@@ -113,7 +115,7 @@ const MainPageInner: FC = () => {
 
   useEffect(() => {
     if (modules.length === 0) {
-      setActiveModule(null);
+      setActiveModule(undefined);
       return;
     }
 
@@ -122,25 +124,25 @@ const MainPageInner: FC = () => {
     }
   }, [modules, activeModule]);
 
-  let generateAndDownload = async () => {
+  const generateAndDownload = async () => {
     setAnimateDownloadIcon(false);
     setGeneratingZip(true);
     try {
-      let m = [...modules];
-      let pairs = (
+      const m = [...modules];
+      const pairs = (
         await Promise.all(m.map((m) => m.generateArtifacts(context)))
       ).map((a, i) => [m[i], a]);
-      let allArtifacts: any[] = [];
-      for (let [module, artifacts] of pairs) {
+      let allArtifacts: Artifact[] = [];
+      for (const [module, artifacts] of pairs) {
         allArtifacts = allArtifacts.concat(
-          artifacts.map((a: any) => ({
+          artifacts.map((a: Artifact) => ({
             ...a,
             filename: `${module.type}/${a.filename}`,
           }))
         );
       }
       // note: JSZip handles promises in artifact content
-      let zipBlob = await generateZip(allArtifacts);
+      const zipBlob = await generateZip(allArtifacts);
       downloadFile(zipBlob, "IconWorkshop.zip");
       setAnimateDownloadIcon(true);
     } finally {
@@ -243,13 +245,13 @@ const Toolbar: FC<ToolbarProps> = ({ children }) => {
 };
 
 interface PreviewProps {
-  module: any;
+  module: BaseModule | undefined;
   darkTheme: boolean;
   children: React.ReactNode;
 }
 
 const Preview: FC<PreviewProps> = ({ module, children, darkTheme }) => {
-  let { previews } = useContext(DocumentContext);
+  const { previews } = useContext(DocumentContext);
 
   return (
     <div className={styles.preview}>
@@ -274,7 +276,7 @@ const Preview: FC<PreviewProps> = ({ module, children, darkTheme }) => {
 };
 
 interface SimplePreviewProps {
-  module: any;
+  module: BaseModule;
   imgSrc: string;
 }
 

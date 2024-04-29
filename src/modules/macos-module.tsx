@@ -27,8 +27,8 @@ export const MacosModule = new (class extends BaseModule {
     size: number,
     forceEffects = false
   ) {
-    let scale = size / 1024;
-    let assetSize = { w: 1024 * scale, h: 1024 * scale };
+    const scale = size / 1024;
+    const assetSize = { w: 1024 * scale, h: 1024 * scale };
     let contentSize = assetSize;
     let finalEffects: Effect[] = [];
 
@@ -115,11 +115,11 @@ export const MacosModule = new (class extends BaseModule {
   }
 
   async generateArtifacts(context: GenerateContext): Promise<Artifact[]> {
-    let canvasPromises = Object.keys(OS_TYPES).map((s) => {
-      let size = parseInt(s, 10);
+    const canvasPromises = Object.keys(OS_TYPES).map((s) => {
+      const size = parseInt(s, 10);
       return this.renderOne(context, size).then((ctx) => ctx.canvas);
     });
-    let canvases = await Promise.all(canvasPromises);
+    const canvases = await Promise.all(canvasPromises);
     return [
       {
         filename: "AppIcon.icns",

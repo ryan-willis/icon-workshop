@@ -1,7 +1,5 @@
 @import "./material-icons";
 
-// layout
-
 @mixin notNarrow {
   @media only screen and (min-width: 600px) {
     @content;
@@ -20,14 +18,10 @@
   }
 }
 
-// focus states
-
 @mixin focus-outline {
   outline: 2px solid var(--color-focus-outline);
   outline-offset: 2px;
 }
-
-// typography
 
 $fontStack: Inter, sans-serif;
 

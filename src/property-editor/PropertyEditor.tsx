@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { FC, useContext } from "react";
+import { FC, ReactElement, useContext } from "react";
 import { ScrollEdges } from "../components/scroll-edges/ScrollEdges";
 import { DocumentContext } from "../DocumentContext";
 import { BooleanField } from "./BooleanField";
@@ -12,8 +12,10 @@ import { ImageField } from "./ImageField";
 import { PaddingField } from "./PaddingField";
 import styles from "./PropertyEditor.module.scss";
 import { TextField } from "./TextField";
-import { GenerateContext, PropertyModel } from "../imagelib/types";
+import { GenerateContext } from "../imagelib/types";
+import { BaseModule } from "../base-module";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const COMPONENT_MAP: Record<string, FC<any>> = {
   text: TextField,
   enum: EnumField,
@@ -28,8 +30,8 @@ const COMPONENT_MAP: Record<string, FC<any>> = {
 
 interface PropertyEditorProps {
   className?: string;
-  module: { propertyModel: PropertyModel };
-  children?: any;
+  module: BaseModule;
+  children?: ReactElement;
 }
 
 export const PropertyEditor: FC<PropertyEditorProps> = ({
@@ -37,7 +39,7 @@ export const PropertyEditor: FC<PropertyEditorProps> = ({
   children,
   module,
 }) => {
-  let { values } = useContext(DocumentContext);
+  const { values } = useContext(DocumentContext);
 
   if (!module) {
     return children;
@@ -48,6 +50,7 @@ export const PropertyEditor: FC<PropertyEditorProps> = ({
       className={cn(className, styles.propertyEditor)}
       edgeClassNames={{ top: styles.topScrollEdge }}
     >
+      {/* @ts-expect-error wtf */}
       <ScrollEdges.Content className={styles.propertyEditorContent}>
         {module.propertyModel.groups.map(({ title, noHeader, properties }) => (
           <div className={styles.group} key={title}>
@@ -82,7 +85,7 @@ interface PropertyProps {
     type: string;
     labelHidden?: boolean;
   };
-  module: any;
+  module: BaseModule;
 }
 
 const Property: FC<PropertyProps> = ({ property, module }) => {
@@ -105,7 +108,7 @@ const Property: FC<PropertyProps> = ({ property, module }) => {
         property={property}
         value={rawValues[id]}
         effectiveValue={values[id]}
-        onValue={(val: any) => set(id, val)}
+        onValue={(val: string) => set(id, val)}
       />
     </div>
   );

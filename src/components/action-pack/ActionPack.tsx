@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { Children, FC, ReactEventHandler, useState } from "react";
+import { FC, ReactElement, ReactEventHandler, useState } from "react";
 import { MenuItem, PopupMenu } from "../popup-menu/PopupMenu";
 import { Tooltip } from "../tooltip/Tooltip";
 
@@ -11,22 +11,18 @@ interface MenuState {
 }
 
 interface ActionPackProps {
-  children: any;
+  children: ReactElement[];
   className?: string;
 }
 
 export const ActionPack: FC<ActionPackProps> = ({ children, className }) => {
   const [menuState, setMenuState] = useState<MenuState | null>(null);
 
-  let childrenArray = Children.toArray(children) as {
-    key: string;
-    props: Record<string, any>;
-  }[];
-  let visibleChildren = childrenArray.filter(({ props }) => !props.overflow);
-  let overflowChildren = childrenArray.filter(({ props }) => !!props.overflow);
+  const visibleChildren = children.filter(({ props }) => !props.overflow);
+  const overflowChildren = children.filter(({ props }) => !!props.overflow);
 
-  let showOverflowMenu: ReactEventHandler<HTMLButtonElement> = (ev) => {
-    let v = ev.currentTarget.getBoundingClientRect();
+  const showOverflowMenu: ReactEventHandler<HTMLButtonElement> = (ev) => {
+    const v = ev.currentTarget.getBoundingClientRect();
     setMenuState({
       right: window.innerWidth - v.right,
       top: v.top + v.height + 4,
@@ -35,8 +31,8 @@ export const ActionPack: FC<ActionPackProps> = ({ children, className }) => {
 
   return (
     <div className={cn(className, styles.pack)}>
-      {visibleChildren.map(({ key, props }) => (
-        <VisibleAction key={key} {...props} />
+      {visibleChildren.map(({ key, props }, i) => (
+        <VisibleAction key={key || i} {...props} />
       ))}
       {!!overflowChildren.length && (
         <VisibleAction
@@ -52,9 +48,9 @@ export const ActionPack: FC<ActionPackProps> = ({ children, className }) => {
           right={menuState?.right}
           top={menuState?.top}
         >
-          {overflowChildren.map(({ key, props }) => (
+          {overflowChildren.map(({ key, props }, i) => (
             <MenuItem
-              key={key}
+              key={key || i}
               icon={props.icon}
               label={props.label || props.tooltip}
               disabled={props.disabled}
@@ -87,7 +83,7 @@ const VisibleAction: FC<VisibleActionProps> = ({
   onClick,
   onHideTooltip,
 }) => {
-  let button = (
+  const Button = (
     <button
       className={cn(styles.action, {
         [styles.isPrimary]: primary,
@@ -107,12 +103,12 @@ const VisibleAction: FC<VisibleActionProps> = ({
   );
 
   if (!tooltip || label) {
-    return button;
+    return Button;
   }
 
   return (
     <Tooltip tooltip={tooltip} onHide={() => onHideTooltip && onHideTooltip()}>
-      {button}
+      {Button}
     </Tooltip>
   );
 };

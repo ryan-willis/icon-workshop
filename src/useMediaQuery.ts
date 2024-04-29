@@ -1,11 +1,11 @@
 import { useState, useLayoutEffect } from "react";
 
 export function useMediaQuery(query: string) {
-  let [isActive, setActive] = useState(false);
+  const [isActive, setActive] = useState(false);
 
   useLayoutEffect(() => {
-    var mql = window.matchMedia(query);
-    let onChange = (e: MediaQueryListEvent) => setActive(!!e.matches);
+    const mql = window.matchMedia(query);
+    const onChange = (e: MediaQueryListEvent) => setActive(!!e.matches);
     setActive(!!mql.matches);
     mql.addEventListener("change", onChange);
     return () => mql.removeEventListener("change", onChange);

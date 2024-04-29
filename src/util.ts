@@ -9,14 +9,14 @@ export function sanitizeResourceName(s: string) {
 }
 
 export function downloadFile(content: Blob | BlobPart, filename: string) {
-  let anchor = document.createElement("a");
+  const anchor = document.createElement("a");
   anchor.style.display = "none";
   document.body.appendChild(anchor);
   let blob = content;
   if (!(content instanceof Blob)) {
     blob = new Blob([content], { type: "application/octet-stream" });
   }
-  let url = window.URL.createObjectURL(blob as Blob);
+  const url = window.URL.createObjectURL(blob as Blob);
   anchor.setAttribute("href", url);
   anchor.setAttribute("download", filename);
   anchor.click();
@@ -27,24 +27,24 @@ export function downloadFile(content: Blob | BlobPart, filename: string) {
 }
 
 export async function generateZip(artifacts: Artifact[]): Promise<Blob> {
-  let zip = new JSZip();
-  for (let { filename, content } of artifacts) {
+  const zip = new JSZip();
+  for (const { filename, content } of artifacts) {
     zip.file(filename, content);
   }
 
   return await zip.generateAsync({ type: "blob" });
 }
 
-export function debounce(delay: number, fn: Function) {
-  let timeout: NodeJS.Timeout | null;
+// export function debounce<T>(delay: number, fn: (...args: T[]) => void) {
+//   let timeout: NodeJS.Timeout | null;
 
-  return (...args: any[]) => {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => {
-      fn(...args);
-      timeout = null;
-    }, delay);
-  };
-}
+//   return (...args: T[]) => {
+//     if (timeout) {
+//       clearTimeout(timeout);
+//     }
+//     timeout = setTimeout(() => {
+//       fn(...args);
+//       timeout = null;
+//     }, delay);
+//   };
+// }

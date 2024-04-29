@@ -18,21 +18,23 @@ import { fx } from "./effects";
 import { Layer, LayerGroup, Rect, Size } from "./types";
 
 export function makeContext({ w, h }: Size): CanvasRenderingContext2D {
-  let canvas = document.createElement("canvas");
+  const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
   canvas.style.setProperty("image-rendering", "optimizeQuality");
   return canvas.getContext("2d")!;
 }
 
+type Source = CanvasImageSource & { canvas?: HTMLCanvasElement };
+
 export function drawCenterInside(
   dstCtx: CanvasRenderingContext2D,
-  src: any,
+  src: Source,
   dstRect: Rect,
   srcRect: Rect
 ) {
   if (srcRect.w / srcRect.h > dstRect.w / dstRect.h) {
-    var h = (srcRect.h * dstRect.w) / srcRect.w;
+    const h = (srcRect.h * dstRect.w) / srcRect.w;
     drawImageScaled(
       dstCtx,
       src,
@@ -46,7 +48,7 @@ export function drawCenterInside(
       h
     );
   } else {
-    var w = (srcRect.w * dstRect.h) / srcRect.h;
+    const w = (srcRect.w * dstRect.h) / srcRect.h;
     drawImageScaled(
       dstCtx,
       src,
@@ -64,12 +66,12 @@ export function drawCenterInside(
 
 export function drawCenterCrop(
   dstCtx: CanvasRenderingContext2D,
-  src: any,
+  src: Source,
   dstRect: Rect,
   srcRect: Rect
 ) {
   if (srcRect.w / srcRect.h > dstRect.w / dstRect.h) {
-    var w = (srcRect.h * dstRect.w) / dstRect.h;
+    const w = (srcRect.h * dstRect.w) / dstRect.h;
     drawImageScaled(
       dstCtx,
       src,
@@ -83,7 +85,7 @@ export function drawCenterCrop(
       dstRect.h
     );
   } else {
-    var h = (srcRect.w * dstRect.h) / dstRect.w;
+    const h = (srcRect.w * dstRect.h) / dstRect.w;
     drawImageScaled(
       dstCtx,
       src,
@@ -101,7 +103,7 @@ export function drawCenterCrop(
 
 export function drawImageScaled(
   dstCtx: CanvasRenderingContext2D,
-  src: any,
+  src: CanvasImageSource & { canvas?: HTMLCanvasElement },
   sx: number,
   sy: number,
   sw: number,
@@ -121,9 +123,9 @@ export function drawImageScaled(
   // algorithm: when scaling down, downsample by at most a factor of 2 per iteration
   // to avoid poor browser downsampling
   while (dw < sw / 2 || dh < sh / 2) {
-    let tmpDw = Math.ceil(Math.max(dw, sw / 2));
-    let tmpDh = Math.ceil(Math.max(dh, sh / 2));
-    let tmpCtx = makeContext({ w: tmpDw, h: tmpDh });
+    const tmpDw = Math.ceil(Math.max(dw, sw / 2));
+    const tmpDh = Math.ceil(Math.max(dh, sh / 2));
+    const tmpCtx = makeContext({ w: tmpDw, h: tmpDh });
 
     tmpCtx.clearRect(0, 0, tmpDw, tmpDh);
     tmpCtx.drawImage(src, sx, sy, sw, sh, 0, 0, tmpDw, tmpDh);
@@ -158,7 +160,7 @@ export function drawLayers(
 
     if (layer.effects) {
       // apply effects in a new buffer
-      let effectsCtx = makeContext(size);
+      const effectsCtx = makeContext(size);
       fx(layer.effects, effectsCtx, layerCtx, size);
       layerCtx = effectsCtx;
     }
@@ -172,20 +174,20 @@ export function drawLayers(
   }
 
   function drawGroup_(dstCtx: CanvasRenderingContext2D, group: LayerGroup) {
-    let dstCtxStack = [dstCtx];
+    const dstCtxStack = [dstCtx];
 
-    for (let layer of group.children.filter((layer) => !!layer) as Layer[]) {
+    for (const layer of group.children.filter((layer) => !!layer) as Layer[]) {
       drawLayer_(dstCtxStack[dstCtxStack.length - 1], layer);
       if ("mask" in layer && layer.mask) {
         // draw future layers into a separate buffer (later gets masked)
-        let maskedContentCtx = makeContext(size);
+        const maskedContentCtx = makeContext(size);
         dstCtxStack.push(maskedContentCtx);
       }
     }
 
     while (dstCtxStack.length > 1) {
-      let targetCtx = dstCtxStack[dstCtxStack.length - 2];
-      let contentCtx = dstCtxStack[dstCtxStack.length - 1];
+      const targetCtx = dstCtxStack[dstCtxStack.length - 2];
+      const contentCtx = dstCtxStack[dstCtxStack.length - 1];
       targetCtx.save();
       targetCtx.globalCompositeOperation = "source-atop";
       targetCtx.drawImage(contentCtx.canvas, 0, 0);

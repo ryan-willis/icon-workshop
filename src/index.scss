@@ -1,7 +1,6 @@
 @import './shared';
 
 :root {
-  // color tokens
   $accent: #3d73e8;
   $ink: #222b44;
   --color-accent: #{$accent};
@@ -20,7 +19,6 @@
 }
 
 @mixin dark-theme {
-  // color tokens
   $accent: #2e64d0;
   --color-accent: #{$accent};
   --color-accent-tonal: #{rgba($accent, .24)};

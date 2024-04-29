@@ -11,9 +11,10 @@ export function makeIco(canvases: HTMLCanvasElement[]) {
 
   let offset = HEADER_SIZE + DIRECTORY_SIZE * canvases.length;
 
-  let imageDatas = canvases.map((canvas) => {
-    let ctx = canvas.getContext("2d");
-    return ctx!.getImageData(0, 0, canvas.width, canvas.width);
+  const imageDatas = canvases.map((canvas) => {
+    return canvas
+      .getContext("2d")!
+      .getImageData(0, 0, canvas.width, canvas.width);
   });
 
   for (const imageData of imageDatas) {
@@ -107,11 +108,11 @@ function createDib(imageData: ImageData) {
 }
 
 function mergedArrays(arrs: Uint8ClampedArray[]) {
-  let totalSize = arrs.reduce((s, a) => s + a.length, 0);
-  let buf = bufferAlloc(totalSize);
+  const totalSize = arrs.reduce((s, a) => s + a.length, 0);
+  const buf = bufferAlloc(totalSize);
   let pos = 0;
   for (let i = 0; i < arrs.length; i++) {
-    let arr = arrs[i];
+    const arr = arrs[i];
     buf.set(arr, pos);
     pos += arr.length;
   }

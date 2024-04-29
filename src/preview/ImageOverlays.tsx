@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { CSSProperties, FC } from "react";
 import styles from "./ImageOverlays.module.scss";
 import cn from "classnames";
 
 interface ImageOverlaysProps {
-  style?: any;
+  style?: CSSProperties;
   className?: string;
   src: string;
   width: number;

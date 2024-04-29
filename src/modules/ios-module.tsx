@@ -102,8 +102,8 @@ export const IosModule = new (class extends BaseModule {
   }
 
   async generateArtifacts(context: GenerateContext): Promise<Artifact[]> {
-    let blobPromises: Record<number, Promise<Blob>> = {};
-    for (let { sizePixels } of Array.from(
+    const blobPromises: Record<number, Promise<Blob>> = {};
+    for (const { sizePixels } of Array.from(
       new Set(Object.values(ARTIFACT_SPECS))
     )) {
       blobPromises[sizePixels] = renderAppIcon(context, {
@@ -153,7 +153,7 @@ function makeModifierString({ size, idiom, scale }: ArtifactSpec) {
   ].join("");
 }
 
-for (let [mod, spec] of Object.entries(ARTIFACT_SPECS)) {
+for (const [mod, spec] of Object.entries(ARTIFACT_SPECS)) {
   if (mod !== makeModifierString(spec)) {
     console.warn(
       "iOS module artifact spec",

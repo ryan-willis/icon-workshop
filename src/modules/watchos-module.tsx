@@ -48,7 +48,14 @@ export const WatchOSModule = new (class extends BaseModule {
     };
   }
 
-  renderPreview({ main }: any, { darkTheme }: any) {
+  renderPreview(
+    { main }: Record<string, string>,
+    {
+      darkTheme,
+    }: {
+      darkTheme: boolean;
+    }
+  ) {
     return (
       <ShrinkToFit>
         <ImageOverlays
@@ -70,8 +77,8 @@ export const WatchOSModule = new (class extends BaseModule {
   }
 
   async generateArtifacts(context: GenerateContext): Promise<Artifact[]> {
-    let blobPromises: Record<number, Promise<Blob>> = {};
-    for (let size of Array.from(new Set(Object.values(ARTIFACT_SPECS)))) {
+    const blobPromises: Record<number, Promise<Blob>> = {};
+    for (const size of Array.from(new Set(Object.values(ARTIFACT_SPECS)))) {
       blobPromises[size] = renderAppIcon(context, {
         assetSize: { w: size, h: size },
         shape: "square-sharp",

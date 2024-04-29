@@ -1,7 +1,7 @@
-import { FC } from "react";
+import { CSSProperties, FC } from "react";
 
 interface ArrowNwCwImageProps {
-  style: any;
+  style: CSSProperties;
 }
 
 export const ArrowNwCwImage: FC<ArrowNwCwImageProps> = (props) => (

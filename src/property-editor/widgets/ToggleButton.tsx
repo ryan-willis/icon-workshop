@@ -19,13 +19,13 @@ export const ToggleButton: FC<ToggleButtonProps> = ({
   options,
   ...props
 }) => {
-  let [randomName] = useState(`toggle-${Math.floor(Math.random() * 9999)}`);
+  const [randomName] = useState(`toggle-${Math.floor(Math.random() * 9999)}`);
   name = name || randomName;
 
   return (
     <div {...props} className={cn(className, styles.widget)}>
       {options.map(([id, label]) => {
-        let selected = id === value;
+        const selected = id === value;
         return (
           <label key={id} className={cn({ [styles.isSelected]: selected })}>
             <input

@@ -4,9 +4,12 @@ import { ToggleButton } from "./widgets/ToggleButton";
 
 interface EnumFieldProps {
   fieldId: string;
-  property: any;
-  effectiveValue: any;
-  onValue: (value: any) => void;
+  property: {
+    options: [string, string][];
+    inline?: boolean;
+  };
+  effectiveValue: string;
+  onValue: (value: string) => void;
 }
 
 export const EnumField: FC<EnumFieldProps> = ({
@@ -15,7 +18,7 @@ export const EnumField: FC<EnumFieldProps> = ({
   effectiveValue,
   onValue,
 }) => {
-  let { options, inline } = property;
+  const { options, inline } = property;
 
   return (
     <div style={{ flex: 1 }}>

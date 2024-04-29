@@ -1,11 +1,12 @@
 import cn from "classnames";
 import { FC, ReactEventHandler, useEffect, useRef, useState } from "react";
-// @ts-ignore
+// @ts-expect-error no type exports
 import SketchPicker from "react-color/lib/Sketch";
 import { createPortal } from "react-dom";
 import tinycolor from "tinycolor2";
 import { useModalRootNode } from "../../useModalRootNode";
 import styles from "./ColorWidget.module.scss";
+import { PickerColor } from "../../imagelib/types";
 
 const PRESET_COLORS = [
   "#f44336",
@@ -70,17 +71,17 @@ export const ColorWidget: FC<ColorWidgetProps> = ({
   allowAlpha = false,
   ...props
 }) => {
-  let [openState, setOpenState] = useState<OpenState | boolean>(false);
-  let [color, setColor] = useState(tinycolor(value).toRgbString());
-  let modalRoot = useModalRootNode();
-  let blurTimeout = useRef<NodeJS.Timeout>();
+  const [openState, setOpenState] = useState<OpenState | boolean>(false);
+  const [color, setColor] = useState(tinycolor(value).toRgbString());
+  const modalRoot = useModalRootNode();
+  const blurTimeout = useRef<NodeJS.Timeout>();
 
   useEffect(() => setColor(tinycolor(value).toRgbString()), [value, setColor]);
 
   const showPicker: ReactEventHandler<HTMLDivElement> = (ev) => {
-    let minVisibleHeight = 320 + (allowAlpha ? 16 : 0);
-    let minVisibleWidth = 240;
-    let v = ev.currentTarget.getBoundingClientRect();
+    const minVisibleHeight = 320 + (allowAlpha ? 16 : 0);
+    const minVisibleWidth = 240;
+    const v = ev.currentTarget.getBoundingClientRect();
     setOpenState({
       left: Math.min(
         v.left,
@@ -137,8 +138,10 @@ export const ColorWidget: FC<ColorWidgetProps> = ({
                 color={color}
                 presetColors={PRESET_COLORS}
                 disableAlpha={!allowAlpha}
-                onChange={(color: any) => setColor(pickerColorToValue(color))}
-                onChangeComplete={(color: any) =>
+                onChange={(color: PickerColor) =>
+                  setColor(pickerColorToValue(color))
+                }
+                onChangeComplete={(color: PickerColor) =>
                   onChange(pickerColorToValue(color))
                 }
               />
@@ -150,6 +153,6 @@ export const ColorWidget: FC<ColorWidgetProps> = ({
   );
 };
 
-function pickerColorToValue({ hex, rgb: { r, g, b, a } }: any) {
+function pickerColorToValue({ hex, rgb: { r, g, b, a } }: PickerColor) {
   return a === 1 ? hex : `rgba(${r}, ${g}, ${b}, ${a})`;
 }

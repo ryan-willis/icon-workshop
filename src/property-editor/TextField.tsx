@@ -1,9 +1,10 @@
 import { FC } from "react";
 import { TextWidget } from "./widgets/TextWidget";
+import { Property } from "../imagelib/types";
 
 interface TextFieldProps {
   fieldId: string;
-  property: any;
+  property: Property;
   value: string;
   onValue: (value: string) => void;
 }
@@ -20,7 +21,7 @@ export const TextField: FC<TextFieldProps> = ({
       type="text"
       onChange={(value) => onValue(value)}
       value={value || ""}
-      placeholder={property.default}
+      placeholder={property.default as string}
     />
   );
 };

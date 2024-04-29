@@ -1,4 +1,6 @@
 import { Instance } from "tinycolor2";
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+// TODO: ^ fix ^
 
 export interface Size {
   w: number;
@@ -36,7 +38,7 @@ export interface Property {
   id: keyof GenerateContext["values"];
   title: string;
   type: string;
-  default?: any;
+  default?: unknown;
   inline?: boolean;
   options?: [string, string][];
   depends?: (values: any) => boolean;
@@ -113,6 +115,11 @@ export interface GenerateContext {
     fgColor?: Instance;
     bgColor?: string;
   };
+}
+
+export interface PickerColor {
+  hex: string;
+  rgb: { r: number; g: number; b: number; a: number };
 }
 
 export interface Effect {

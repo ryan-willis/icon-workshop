@@ -5,10 +5,11 @@ import { ScrollEdges } from "../../components/scroll-edges/ScrollEdges";
 import { ALL_MODULES, DocumentContext } from "../../DocumentContext";
 import { ArrowNwCwImage } from "./images/arrow-nw-cw";
 import styles from "./ModulePicker.module.scss";
+import { BaseModule } from "../../base-module";
 
 interface ModulePickerProps {
-  activeModule: any;
-  onChange: (module: any) => void;
+  activeModule: BaseModule;
+  onChange: (module: BaseModule) => void;
 }
 
 interface MenuState {
@@ -20,18 +21,17 @@ export const ModulePicker: FC<ModulePickerProps> = ({
   activeModule,
   onChange,
 }) => {
-  let { modules, setModules, previews } = useContext(DocumentContext);
-  let [menuState, setMenuState] = useState<MenuState | null>(null);
-
-  let showMenu: ReactEventHandler<HTMLButtonElement> = (ev) => {
-    let v = ev.currentTarget.getBoundingClientRect();
+  const { modules, setModules, previews } = useContext(DocumentContext);
+  const [menuState, setMenuState] = useState<MenuState | null>(null);
+  const showMenu: ReactEventHandler<HTMLButtonElement> = (ev) => {
+    const v = ev.currentTarget.getBoundingClientRect();
     setMenuState({
       left: v.left,
       top: v.top + v.height + 4,
     });
   };
 
-  let addModule = (module: any) => {
+  const addModule = (module: BaseModule) => {
     if (modules.indexOf(module) < 0) {
       setModules([...modules, module]);
     }
@@ -47,8 +47,9 @@ export const ModulePicker: FC<ModulePickerProps> = ({
         right: styles.rightScrollEdge,
       }}
     >
+      {/* @ts-expect-error wtf */}
       <ScrollEdges.Content className={styles.picker}>
-        {modules.map((module: any) => {
+        {modules.map((module: BaseModule) => {
           return (
             <label
               key={module.type}
@@ -76,7 +77,7 @@ export const ModulePicker: FC<ModulePickerProps> = ({
               <button
                 className={styles.deleteButton}
                 onClick={() => {
-                  let idx = modules.indexOf(module);
+                  const idx = modules.indexOf(module);
                   modules.splice(idx, 1);
                   setModules([...modules]);
                   if (module === activeModule) {
@@ -119,7 +120,7 @@ export const ModulePicker: FC<ModulePickerProps> = ({
           </PopupMenu>
         )}
       </ScrollEdges.Content>
-      {!modules.length && (
+      {!modules.length ? (
         <div className={styles.zeroStateEdu}>
           <ArrowNwCwImage style={{ fill: "var(--color-ink)" }} />
           <span>
@@ -128,6 +129,8 @@ export const ModulePicker: FC<ModulePickerProps> = ({
             to continue
           </span>
         </div>
+      ) : (
+        <></>
       )}
     </ScrollEdges>
   );

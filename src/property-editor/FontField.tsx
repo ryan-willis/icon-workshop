@@ -1,6 +1,7 @@
 import cn from "classnames";
 import {
   FC,
+  ReactNode,
   forwardRef,
   useEffect,
   useLayoutEffect,
@@ -15,6 +16,7 @@ import { useModalRootNode } from "../useModalRootNode";
 import styles from "./FontField.module.scss";
 import peStyles from "./PropertyEditor.module.scss";
 import { TextWidget } from "./widgets/TextWidget";
+import { Property } from "../imagelib/types";
 
 const WEB_FONTS_API_KEY = "AIzaSyAtSe8wlXPCUaLQ4LTyPKpbzBBPJAzEXmU";
 const WEB_FONTS_API_URL = `https://www.googleapis.com/webfonts/v1/webfonts?key=${WEB_FONTS_API_KEY}&fields=items(family)`;
@@ -33,12 +35,18 @@ const DEFAULT_FONTS = [
 
 const WEB_FONTS_LOAD_PROMISES: Record<string, Promise<void>> = {};
 
+interface FontValue {
+  family: string;
+  bold?: boolean;
+  italic?: boolean;
+}
+
 interface FontFieldProps {
   fieldId: string;
-  property: any;
-  value: any;
-  effectiveValue: any;
-  onValue: (value: any) => void;
+  property: Property;
+  value: FontValue;
+  effectiveValue: FontValue;
+  onValue: (value: FontValue | null) => void;
 }
 
 interface MenuPosition {
@@ -54,17 +62,16 @@ export const FontField: FC<FontFieldProps> = ({
   effectiveValue,
   onValue,
 }) => {
-  let [fonts, setFonts] = useState<string[]>([]);
-  let [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
-  let [menuFocused, setMenuFocused] = useState(false);
-  let [familyFocused, setFamilyFocused] = useState(false);
-  let isTouch = !useMediaQuery("(hover: hover)");
-
-  let textWidgetRef = useRef<HTMLInputElement | null>(null);
-  let menuRef = useRef<HTMLUListElement | null>(null);
-  let blurTimeout = useRef<NodeJS.Timeout | null>();
-  let [somethingFocused, setSomethingFocused] = useState(false);
-  let [userClosedMenu, setUserClosedMenu] = useState(false);
+  const [fonts, setFonts] = useState<string[]>([]);
+  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
+  const [menuFocused, setMenuFocused] = useState(false);
+  const [familyFocused, setFamilyFocused] = useState(false);
+  const isTouch = !useMediaQuery("(hover: hover)");
+  const textWidgetRef = useRef<HTMLInputElement | null>(null);
+  const menuRef = useRef<HTMLUListElement | null>(null);
+  const blurTimeout = useRef<NodeJS.Timeout | null>();
+  const [somethingFocused, setSomethingFocused] = useState(false);
+  const [userClosedMenu, setUserClosedMenu] = useState(false);
 
   useEffect(() => {
     if (!menuFocused && !familyFocused) {
@@ -80,14 +87,14 @@ export const FontField: FC<FontFieldProps> = ({
 
   effectiveValue = effectiveValue || { family: "Roboto" };
 
-  let filteredFonts = useMemo(() => {
-    let q = (value?.family || "").toLowerCase();
+  const filteredFonts = useMemo(() => {
+    const q = (value?.family || "").toLowerCase();
     return q
       ? fonts.filter((family) => family.toLowerCase().indexOf(q) >= 0)
       : fonts;
   }, [fonts, value]);
 
-  let menuShown =
+  const menuShown =
     !isTouch && !userClosedMenu && somethingFocused && !!filteredFonts.length;
 
   useEffect(() => {
@@ -112,7 +119,7 @@ export const FontField: FC<FontFieldProps> = ({
           if (!isTouch && ev.key === "ArrowDown") {
             setUserClosedMenu(false);
             (
-              menuRef.current?.querySelector(
+              menuRef.current!.querySelector(
                 "button:not([disabled])"
               )! as HTMLButtonElement
             ).focus();
@@ -120,7 +127,7 @@ export const FontField: FC<FontFieldProps> = ({
           }
         }}
         onFocus={(ev) => {
-          let v = ev.currentTarget.getBoundingClientRect();
+          const v = ev.currentTarget.getBoundingClientRect();
           setMenuPosition({
             left: v.left + 1,
             top: v.top + v.height,
@@ -131,7 +138,7 @@ export const FontField: FC<FontFieldProps> = ({
         }}
         onBlur={() => setFamilyFocused(false)}
         value={value?.family || ""}
-        placeholder={property.default?.family}
+        placeholder={(property.default as { family: string }).family}
       />
       {menuPosition && menuShown && !!filteredFonts.length && (
         <AutocompleteMenu
@@ -198,7 +205,7 @@ export const FontField: FC<FontFieldProps> = ({
 };
 
 interface AutocompleteMenuProps {
-  children: any;
+  children: (typeof FontMenuItem | JSX.Element)[];
   className?: string;
   show: boolean;
   onFocus?: () => void;
@@ -227,9 +234,9 @@ export const AutocompleteMenu: FC<AutocompleteMenuProps> = forwardRef(
     },
     ref
   ) => {
-    let modalRoot = useModalRootNode();
-    let [hasFocus, setHasFocus] = useState(false);
-    let blurTimeout = useRef<NodeJS.Timeout | null>(null);
+    const modalRoot = useModalRootNode();
+    const [hasFocus, setHasFocus] = useState(false);
+    const blurTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
       if (!hasFocus) {
@@ -267,7 +274,7 @@ export const AutocompleteMenu: FC<AutocompleteMenuProps> = forwardRef(
                 }}
                 className={cn(className, styles.autocompleteMenu)}
               >
-                {children}
+                {children as ReactNode[]}
               </ul>
             </>,
             modalRoot
@@ -276,6 +283,8 @@ export const AutocompleteMenu: FC<AutocompleteMenuProps> = forwardRef(
     );
   }
 );
+
+AutocompleteMenu.displayName = "AutocompleteMenu";
 
 interface FontMenuItemProps {
   className?: string;
@@ -288,9 +297,9 @@ export const FontMenuItem: FC<FontMenuItemProps> = ({
   onClick,
   family,
 }) => {
-  let [el, setEl] = useState<HTMLLIElement | null>(null);
-  let [showPreview, setShowPreview] = useState(false);
-  let [fontLoaded, setFontLoaded] = useState(false);
+  const [el, setEl] = useState<HTMLLIElement | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [fontLoaded, setFontLoaded] = useState(false);
 
   const intersectionObserver = useMemo(
     () =>
@@ -329,19 +338,18 @@ export const FontMenuItem: FC<FontMenuItemProps> = ({
         className={cn(className, styles.item)}
         onPointerDown={(ev) => {
           // For Safari... force focus on mousedown
-          let ct = ev.currentTarget;
-          setTimeout(() => ct.focus());
+          setTimeout(() => ev.currentTarget.focus());
         }}
         onKeyDown={(ev) => {
           if (ev.code === "ArrowUp" || ev.code === "ArrowDown") {
-            let next = ev.code === "ArrowDown";
-            let li = ev.currentTarget.closest("li");
-            let items = [
+            const next = ev.code === "ArrowDown";
+            const li = ev.currentTarget.closest("li");
+            const items = [
               ...ev.currentTarget
                 .closest("ul")!
                 .querySelectorAll("li:not([disabled])"),
             ];
-            let idx =
+            const idx =
               (items.indexOf(li as Element) + (next ? 1 : -1) + items.length) %
               items.length;
             items[idx]?.querySelector("button")!.focus();
@@ -396,14 +404,16 @@ export function tryLoadWebFont(
 
 async function loadGoogleWebFontsList() {
   if (WEB_FONTS_CACHE_KEY in localStorage) {
-    let { fetchTime, fonts } = JSON.parse(localStorage[WEB_FONTS_CACHE_KEY]);
+    const { fetchTime, fonts } = JSON.parse(localStorage[WEB_FONTS_CACHE_KEY]);
     if (Number(new Date()) - fetchTime < WEB_FONTS_CACHE_TIME) {
       return fonts;
     }
   }
 
-  let data = await fetch(WEB_FONTS_API_URL).then((d) => d.json());
-  let fonts = (data.items || []).map((item: { family: string }) => item.family);
+  const data = await fetch(WEB_FONTS_API_URL).then((d) => d.json());
+  const fonts = (data.items || []).map(
+    (item: { family: string }) => item.family
+  );
   localStorage[WEB_FONTS_CACHE_KEY] = JSON.stringify({
     fetchTime: Number(new Date()),
     fonts,

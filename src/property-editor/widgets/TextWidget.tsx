@@ -8,7 +8,7 @@ interface NumberValidatorParams {
 
 interface Validator {
   isValid: (s: string) => boolean;
-  forceValid: (s: string) => any;
+  forceValid: (s: string) => number;
 }
 
 export function numberValidator({
@@ -52,8 +52,8 @@ export const TextWidget: FC<TextWidgetProps> = forwardRef(
     { value, suffix, onChange, validator, ...props },
     ref: React.Ref<HTMLInputElement>
   ) => {
-    let [enteredText, setEnteredText] = useState("");
-    let [isFocused, setFocused] = useState(false);
+    const [enteredText, setEnteredText] = useState("");
+    const [isFocused, setFocused] = useState(false);
 
     useEffect(() => {
       !isFocused && setEnteredText(value === null ? "" : value);
@@ -79,9 +79,9 @@ export const TextWidget: FC<TextWidgetProps> = forwardRef(
             }
           }}
           onChange={(ev) => {
-            let v = ev.currentTarget.value;
+            const v = ev.currentTarget.value;
             setEnteredText(v);
-            onChange(validator ? validator.forceValid(v) : v);
+            onChange(String(validator ? validator.forceValid(v) : v));
           }}
         />
         {suffix && (
@@ -96,3 +96,4 @@ export const TextWidget: FC<TextWidgetProps> = forwardRef(
     );
   }
 );
+TextWidget.displayName = "TextWidget";

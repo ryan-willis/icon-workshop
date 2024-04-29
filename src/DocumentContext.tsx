@@ -1,4 +1,11 @@
-import { createContext, FC, useCallback, useMemo, useState } from "react";
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { AndroidModule } from "./modules/android-module";
 import { AndroidTVModule } from "./modules/android-tv-module";
 import { IosModule } from "./modules/ios-module";
@@ -10,6 +17,7 @@ import { WebModule } from "./modules/web-module";
 import { useAsyncDebouncedEffect } from "./useAsyncDebouncedEffect";
 import { usePreviousValue } from "./usePreviousValue";
 import { GenerateContext } from "./imagelib/types";
+import { BaseModule } from "./base-module";
 
 export const DocumentContext = createContext<GenerateContext>({
   values: {},
@@ -32,26 +40,26 @@ export const DEFAULT_MODULES = [MacosModule, IosModule];
 const PREVIEW_THROTTLE_MS = 300;
 
 interface DocumentContextProviderProps {
-  children: any;
+  children: ReactNode;
 }
 
 export const DocumentContextProvider: FC<DocumentContextProviderProps> = ({
   children,
 }) => {
-  let [values, setValues] = useState({});
-  let [modules, setModules] = useState(DEFAULT_MODULES);
-  let [previews, setPreviews] = useState({});
+  const [values, setValues] = useState({});
+  const [modules, setModules] = useState(DEFAULT_MODULES);
+  const [previews, setPreviews] = useState({});
+  const previousModules = usePreviousValue<BaseModule[]>(
+    modules as BaseModule[]
+  );
+  const effectiveValues = useMemo(() => {
+    const ev: Record<string, string | number> = { ...values };
 
-  let previousModules = usePreviousValue(modules);
-
-  let effectiveValues = useMemo(() => {
-    let ev: Record<string, any> = { ...values };
-
-    for (let module of ALL_MODULES) {
-      for (let group of module.propertyModel.groups) {
-        for (let property of group.properties) {
+    for (const module of ALL_MODULES) {
+      for (const group of module.propertyModel.groups) {
+        for (const property of group.properties) {
           if ("default" in property && !(property.id in ev)) {
-            ev[property.id] = property.default;
+            ev[property.id] = property.default as string;
           }
         }
       }
@@ -60,10 +68,10 @@ export const DocumentContextProvider: FC<DocumentContextProviderProps> = ({
     return ev;
   }, [values]);
 
-  let set = useCallback((propertyId: string, val: string | null) => {
+  const set = useCallback((propertyId: string, val: string | null) => {
     if (val === null || val === "") {
       setValues((values) => {
-        let v: Record<string, any> = { ...values };
+        const v: Record<string, string | number> = { ...values };
         delete v[propertyId];
         return v;
       });
@@ -72,7 +80,7 @@ export const DocumentContextProvider: FC<DocumentContextProviderProps> = ({
     }
   }, []);
 
-  let generateContext = {
+  const generateContext = {
     values: effectiveValues,
     rawValues: values,
   } as unknown as GenerateContext;
@@ -80,18 +88,22 @@ export const DocumentContextProvider: FC<DocumentContextProviderProps> = ({
   useAsyncDebouncedEffect(
     async (signal) => {
       // TODO: determine which modules are affected and only update those?
-      let previews: Record<string, any> = {};
-      let previewsArr = await Promise.all(
+      const previews: Record<
+        string,
+        {
+          [id: string]: string;
+        }
+      > = {};
+      const previewsArr = await Promise.all(
         modules.map((mod) => mod.generatePreview(generateContext))
       );
-      for (let [i, module] of modules.entries()) {
+      for (const [i, module] of modules.entries()) {
         previews[module.type] = previewsArr[i];
       }
       if (signal.cancel) {
         return;
       }
       setPreviews(previews);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     {
       delay: PREVIEW_THROTTLE_MS,

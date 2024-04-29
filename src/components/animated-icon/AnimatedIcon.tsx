@@ -30,7 +30,7 @@ export const AnimatedIcon: FC<AnimatedIconProps> = ({
   onStopped,
   ...props
 }) => {
-  let [prep, setPrep] = useState<Prep | null>(null);
+  const [prep, setPrep] = useState<Prep | null>(null);
 
   // preload animation info
   useEffect(() => {
@@ -41,7 +41,7 @@ export const AnimatedIcon: FC<AnimatedIconProps> = ({
 
     let cancel = false;
     (async () => {
-      let img = await loadImageFromUri(animation);
+      const img = await loadImageFromUri(animation);
       if (cancel) {
         return;
       }
@@ -74,7 +74,7 @@ export const AnimatedIcon: FC<AnimatedIconProps> = ({
               return;
             }
 
-            let animSession = node.animate(
+            const animSession = node.animate(
               [
                 { transform: "translatex(0)" },
                 { transform: `translatex(-${prep.numFrames - 1}em)` },

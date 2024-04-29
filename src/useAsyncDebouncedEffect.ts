@@ -10,16 +10,15 @@ interface AsyncDebouncedEffectOptions {
   immediate?: boolean | (() => boolean);
 }
 
-// debounces on leading edge
-export function useAsyncDebouncedEffect(
-  fn: (s: Signal) => Promise<any>,
+export function useAsyncDebouncedEffect<T>(
+  fn: (s: Signal) => Promise<void>,
   { delay, immediate, leadingEdge }: AsyncDebouncedEffectOptions,
-  deps: any[] = []
+  deps: T[] = []
 ) {
-  let lastCompleteRef = useRef(0);
+  const lastCompleteRef = useRef(0);
 
   useEffect(() => {
-    let signal: Signal = { cancel: false };
+    const signal: Signal = { cancel: false };
     let imm = leadingEdge
       ? Number(new Date()) - lastCompleteRef.current > delay
       : false;
@@ -27,7 +26,7 @@ export function useAsyncDebouncedEffect(
       imm =
         imm || (typeof immediate === "function" ? immediate() : !!immediate);
     }
-    let timeout = setTimeout(
+    const timeout = setTimeout(
       () => {
         fn(signal);
         lastCompleteRef.current = Number(new Date());
@@ -38,6 +37,5 @@ export function useAsyncDebouncedEffect(
       clearTimeout(timeout);
       signal.cancel = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

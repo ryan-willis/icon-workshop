@@ -12,9 +12,9 @@ export const GradientField: FC<GradientFieldProps> = ({
   effectiveValue,
   onValue,
 }) => {
-  let { color1, color2, angle: angleNum } = effectiveValue || {};
+  const { color1, color2, angle: angleNum } = effectiveValue || {};
 
-  let angle = `${angleNum || 0}`;
+  const angle = `${angleNum || 0}`;
 
   return (
     <div className={styles.field}>

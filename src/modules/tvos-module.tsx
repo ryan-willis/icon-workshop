@@ -21,8 +21,8 @@ export const TvOSModule = new (class extends BaseModule {
   async generatePreview(
     context: GenerateContext
   ): Promise<{ [id: string]: string }> {
-    let scale = 2;
-    let assetSize = { w: WIDTH * scale, h: HEIGHT * scale };
+    const scale = 2;
+    const assetSize = { w: WIDTH * scale, h: HEIGHT * scale };
 
     return {
       main: (
@@ -51,7 +51,13 @@ export const TvOSModule = new (class extends BaseModule {
     };
   }
 
-  renderPreview({ foreground, background }: any, _: any) {
+  renderPreview({
+    foreground,
+    background,
+  }: {
+    foreground: string;
+    background: string;
+  }) {
     return (
       <TvOSParallaxPreview
         width={400}

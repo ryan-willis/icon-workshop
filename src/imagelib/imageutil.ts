@@ -1,28 +1,9 @@
 import { getSvgPath as figmaSquircleSvgPath } from "figma-squircle";
 import { Rect, Size } from "./types";
 
-export function mult<T extends Record<any, number>>(s: T, mult: number): T {
-  let d: Record<any, number> = {};
-  for (let k in s as any) {
-    d[k] = s[k] * mult;
-  }
-  return d as T;
-}
-
-export function multRound<T extends Record<any, number>>(
-  s: T,
-  mult: number
-): T {
-  let d: Record<any, Number> = {};
-  for (let k in s as any) {
-    d[k] = Math.round(s[k] * mult);
-  }
-  return d as T;
-}
-
 export function loadImageFromUri(uri: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    let img = document.createElement("img");
+    const img = document.createElement("img");
     img.onload = () => resolve(img);
     img.onerror = () => reject();
     img.src = uri;
@@ -42,13 +23,13 @@ export function ctxToBlob(ctx: CanvasRenderingContext2D): Promise<Blob> {
 }
 
 export function ellipsePath({ x, y, w, h }: Rect): Path2D {
-  let p = new Path2D();
+  const p = new Path2D();
   p.ellipse((x + w) / 2, (y + h) / 2, w / 2, h / 2, 0, 0, 2 * Math.PI, false);
   return p;
 }
 
 export function rectPath({ x, y, w, h }: Rect): Path2D {
-  let p = new Path2D();
+  const p = new Path2D();
   p.rect(x, y, w, h);
   p.closePath();
   return p;
@@ -65,13 +46,13 @@ export function roundRectPath(
   { x, y, w, h }: Rect,
   r: number | CornerRadii
 ): Path2D {
-  let {
+  const {
     tl = 0,
     tr = 0,
     bl = 0,
     br = 0,
   } = typeof r === "number" ? { tl: r, tr: r, bl: r, br: r } : r;
-  let p = new Path2D();
+  const p = new Path2D();
   p.moveTo(x + w - tr, y);
   p.arcTo(x + w, y, x + w, y + tr, tr);
   p.lineTo(x + w, y + h - br);
@@ -85,11 +66,11 @@ export function roundRectPath(
 }
 
 export function simpleSquirclePath({ x, y, w, h }: Rect, smooth = 0.1) {
-  let l = x;
-  let t = y;
-  let r = x + w;
-  let b = y + h;
-  let p = new Path2D();
+  const l = x;
+  const t = y;
+  const r = x + w;
+  const b = y + h;
+  const p = new Path2D();
   p.moveTo((l + r) / 2, t);
   p.bezierCurveTo(r - smooth * w, t, r, t + smooth * h, r, (t + b) / 2);
   p.bezierCurveTo(r, b - smooth * h, r - smooth * h, b, (l + r) / 2, b);

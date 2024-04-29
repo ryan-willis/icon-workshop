@@ -4,7 +4,7 @@ import cn from "classnames";
 import { useMediaQuery } from "../useMediaQuery";
 
 interface TvOSParallaxPreviewProps {
-  layers: any[];
+  layers: string[];
   width: number;
   height: number;
 }
@@ -14,10 +14,10 @@ export const TvOSParallaxPreview: FC<TvOSParallaxPreviewProps> = ({
   width,
   height,
 }) => {
-  let [isPointerDown, setPointerDown] = useState(false);
-  let [isPointerHovering, setPointerHovering] = useState(false);
-  let isNarrow = useMediaQuery("(max-width: 599px)");
-  let scale = isNarrow ? 0.66666 : 1;
+  const [isPointerDown, setPointerDown] = useState(false);
+  const [isPointerHovering, setPointerHovering] = useState(false);
+  const isNarrow = useMediaQuery("(max-width: 599px)");
+  const scale = isNarrow ? 0.66666 : 1;
 
   return (
     <div
@@ -26,8 +26,8 @@ export const TvOSParallaxPreview: FC<TvOSParallaxPreviewProps> = ({
       onPointerEnter={() => setPointerHovering(true)}
       onPointerLeave={() => setPointerHovering(false)}
       onPointerMove={(ev) => {
-        let el = ev.currentTarget;
-        let r = el.getBoundingClientRect();
+        const el = ev.currentTarget;
+        const r = el.getBoundingClientRect();
         el.style.setProperty(
           "--mx",
           `${((ev.clientX - r.left) / r.width) * 2 - 1}`
@@ -46,7 +46,7 @@ export const TvOSParallaxPreview: FC<TvOSParallaxPreviewProps> = ({
         style={{
           width,
           height,
-          // @ts-ignore
+          // @ts-expect-error scale
           "--scale": scale,
         }}
       >
@@ -54,7 +54,7 @@ export const TvOSParallaxPreview: FC<TvOSParallaxPreviewProps> = ({
           <img
             key={i}
             className={styles.layer}
-            // @ts-ignore
+            // @ts-expect-error depth
             style={{ "--depth": i === 0 ? 0 : i / (layers.length - 1) }}
             src={layer}
             alt=""

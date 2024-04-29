@@ -1,11 +1,19 @@
-import { FC, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  CSSProperties,
+  FC,
+  ReactNode,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import styles from "./ShrinkToFit.module.scss";
 import cn from "classnames";
 
 interface ShrinkToFitProps {
-  style?: any;
+  style?: CSSProperties;
   className?: string;
-  children: any;
+  children: ReactNode | ReactNode[];
 }
 
 export const ShrinkToFit: FC<ShrinkToFitProps> = ({
@@ -13,9 +21,9 @@ export const ShrinkToFit: FC<ShrinkToFitProps> = ({
   className,
   children,
 }) => {
-  let [container, setContainer] = useState<HTMLDivElement | null>(null);
-  let [scale, setScale] = useState(1);
-  let contentRef = useRef<HTMLDivElement>(null);
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const [scale, setScale] = useState(1);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const resizeObserver = useMemo(
     () =>

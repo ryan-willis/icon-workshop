@@ -51,28 +51,28 @@ export const AndroidModule = new (class extends BaseModule {
   async generatePreview(
     context: GenerateContext
   ): Promise<{ [id: string]: string }> {
-    let scale = 2;
-    let assetSize = { w: 46 * scale, h: 46 * scale };
-    let { bgShape, darkTheme, themed } = context.values;
+    const scale = 2;
+    const assetSize = { w: 46 * scale, h: 46 * scale };
+    const { bgShape, darkTheme, themed } = context.values;
 
     // render the actual icon
-    let appIcon = await renderAppIcon(context, {
+    const appIcon = await renderAppIcon(context, {
       assetSize,
       shape: bgShape!,
     });
 
     // render contextual apps
-    let otherIconsSheet = await loadImageFromUri(
+    const otherIconsSheet = await loadImageFromUri(
       themed ? androidAppIconsMono : androidAppIcons
     );
     let otherIconsSheetSrc: CanvasImageSource | CanvasRenderingContext2D =
       otherIconsSheet;
-    let oSize = otherIconsSheet.naturalHeight;
-    let numOtherApps = Math.floor(otherIconsSheet.naturalWidth / oSize);
-    let ctx = makeContext({ w: oSize, h: oSize });
-    let otherAppPreviews: string[] = [];
+    const oSize = otherIconsSheet.naturalHeight;
+    const numOtherApps = Math.floor(otherIconsSheet.naturalWidth / oSize);
+    const ctx = makeContext({ w: oSize, h: oSize });
+    const otherAppPreviews: string[] = [];
 
-    let main = appIcon.canvas.toDataURL();
+    const main = appIcon.canvas.toDataURL();
     let mainThemed = main;
     if (themed) {
       const { fg, bg } = THEME_PREVIEW_COLORS[darkTheme ? "dark" : "light"];
@@ -80,7 +80,7 @@ export const AndroidModule = new (class extends BaseModule {
       // draw the app icon, themed
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, oSize, oSize);
-      let appIconMono = await renderAppIcon(context, {
+      const appIconMono = await renderAppIcon(context, {
         assetSize,
         shape: bgShape!,
         layer: "foreground",
@@ -107,7 +107,7 @@ export const AndroidModule = new (class extends BaseModule {
         w: otherIconsSheet.naturalWidth,
         h: otherIconsSheet.naturalHeight,
       };
-      let sheetCtx = makeContext(sheetSize);
+      const sheetCtx = makeContext(sheetSize);
       sheetCtx.fillStyle = bg;
       sheetCtx.fillRect(0, 0, sheetSize.w, sheetSize.h);
       fx(
@@ -155,8 +155,14 @@ export const AndroidModule = new (class extends BaseModule {
     };
   }
 
-  // @ts-ignore
-  renderPreview({ mainThemed, app1, app2, app3, app4 }, { darkTheme }) {
+  renderPreview(
+    { mainThemed, app1, app2, app3, app4 }: Record<string, string>,
+    {
+      darkTheme,
+    }: {
+      darkTheme: boolean;
+    }
+  ) {
     const images = [app1, app2, mainThemed, app3, app4];
 
     return (
@@ -178,9 +184,9 @@ export const AndroidModule = new (class extends BaseModule {
   }
 
   async generateArtifacts(context: GenerateContext): Promise<Artifact[]> {
-    let { filename, bgShape } = context.values;
-    // @ts-ignore
-    let legacyContentSize = LEGACY_CONTENT_SIZE_BY_SHAPE[bgShape];
+    const { filename, bgShape } = context.values;
+    // @ts-expect-error okie
+    const legacyContentSize = LEGACY_CONTENT_SIZE_BY_SHAPE[bgShape];
 
     return [
       // adaptive XML
@@ -279,7 +285,7 @@ export const AndroidModule = new (class extends BaseModule {
 
 interface Effect {
   effect: string;
-  [key: string]: any;
+  [key: string]: string | number | Record<string, string | number>[];
 }
 
 function makeLegacyFinalEffects(scale: number): Effect[] {

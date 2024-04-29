@@ -21,7 +21,7 @@ export const PaddingField: FC<PaddingFieldProps> = ({
   effectiveValue,
   onValue,
 }) => {
-  let [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (
@@ -34,7 +34,8 @@ export const PaddingField: FC<PaddingFieldProps> = ({
   }, [effectiveValue]);
   effectiveValue = effectiveValue || { top: 0, right: 0, bottom: 0, left: 0 };
 
-  let setAll = (v: number) => onValue({ top: v, right: v, bottom: v, left: v });
+  const setAll = (v: number) =>
+    onValue({ top: v, right: v, bottom: v, left: v });
 
   return (
     <div className={styles.field}>

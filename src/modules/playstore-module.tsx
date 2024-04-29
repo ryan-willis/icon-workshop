@@ -30,6 +30,10 @@ export const PlayStoreModule = new (class extends BaseModule {
     ];
   }
 
+  renderPreview() {
+    return <></>;
+  }
+
   async generatePreview(
     context: GenerateContext
   ): Promise<{ [id: string]: string }> {
@@ -104,7 +108,7 @@ export const PlayStoreModule = new (class extends BaseModule {
 })();
 
 async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
-  let {
+  const {
     psLayout,
     psIcon,
     psBg,
@@ -116,11 +120,11 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
   } = context.values;
   const psFont = psf!;
 
-  let horizontal = psLayout === "h";
+  const horizontal = psLayout === "h";
 
   // prepare icon
-  let iconSize = horizontal ? 250 : 225;
-  let iconCtx =
+  const iconSize = horizontal ? 250 : 225;
+  const iconCtx =
     psIcon &&
     (await renderAppIcon(context, {
       assetSize: { w: iconSize, h: iconSize },
@@ -128,7 +132,7 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
     }));
 
   // prepare output context
-  let ctx = makeContext({ w: FG_WIDTH * scale, h: FG_HEIGHT * scale });
+  const ctx = makeContext({ w: FG_WIDTH * scale, h: FG_HEIGHT * scale });
   ctx.scale(scale, scale);
   ctx.beginPath();
   ctx.rect(0, 0, FG_WIDTH, FG_HEIGHT);
@@ -140,7 +144,7 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
     bold: psFont.bold,
     italic: psFont.italic,
   });
-  let font = (size: number) => `
+  const font = (size: number) => `
     ${psFont.italic ? "italic" : ""}
     ${psFont.bold ? "bold" : ""}
     ${size}px
@@ -148,36 +152,36 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
 
   if (!psIcon || horizontal) {
     // horizontal or no-icon lockup
-    let iconSpace = psIcon ? iconSize + 64 : 0;
-    let titleArgs: TextArgs = {
+    const iconSpace = psIcon ? iconSize + 64 : 0;
+    const titleArgs: TextArgs = {
       align: psIcon ? "left" : "center",
       mode: "shrink",
       fontSize: 84,
       font,
     };
-    let taglineArgs: TextArgs = {
+    const taglineArgs: TextArgs = {
       align: psIcon ? "left" : "center",
       mode: "wrap",
       fontSize: 40,
       leading: 10,
       font,
     };
-    let taglineMargin = 24;
+    const taglineMargin = 24;
 
     // measure title and subtitle
-    let mTitle = measureText(
+    const mTitle = measureText(
       ctx,
       psTitle!,
       FG_WIDTH - 160 - iconSpace,
       titleArgs
     );
-    let mTagline = measureText(
+    const mTagline = measureText(
       ctx,
       psTagline!,
       FG_WIDTH - 160 - iconSpace,
       taglineArgs
     );
-    let contentWidth = Math.max(mTitle.w, mTagline.w) + iconSpace;
+    const contentWidth = Math.max(mTitle.w, mTagline.w) + iconSpace;
 
     // draw icon
     if (psIcon && iconCtx)
@@ -190,7 +194,7 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
       );
 
     // draw title and subtitle
-    let color = tinycolor(psFg);
+    const color = tinycolor(psFg);
     ctx.fillStyle = color.toRgbString();
     text(
       ctx,
@@ -226,25 +230,23 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
     }
   } else {
     // vertical lockup, icon guaranteed
-    let titleArgs: TextArgs = {
+    const titleArgs: TextArgs = {
       align: "center",
       mode: "shrink",
       fontSize: 64,
       font,
     };
-    let taglineArgs: TextArgs = {
+    const taglineArgs: TextArgs = {
       align: "center",
       mode: "shrink",
       fontSize: 40,
       font,
     };
-    let iconMargin = 40;
-    let taglineMargin = 12;
-
-    let mTitle = measureText(ctx, psTitle!, FG_WIDTH - 160, titleArgs);
-    let mTagline = measureText(ctx, psTagline!, FG_WIDTH - 160, taglineArgs);
-
-    let contentHeight =
+    const iconMargin = 40;
+    const taglineMargin = 12;
+    const mTitle = measureText(ctx, psTitle!, FG_WIDTH - 160, titleArgs);
+    const mTagline = measureText(ctx, psTagline!, FG_WIDTH - 160, taglineArgs);
+    const contentHeight =
       iconSize +
       iconMargin +
       mTitle.h +
@@ -261,7 +263,7 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
       );
 
     // draw title and subtitle
-    let color = tinycolor(psFg);
+    const color = tinycolor(psFg);
     ctx.fillStyle = color.toRgbString();
     text(
       ctx,
@@ -300,7 +302,7 @@ async function generateFeatureGraphic(context: GenerateContext, scale = 1) {
 
 interface TextArgs {
   fontSize: number;
-  font: Function | string;
+  font: (size: number) => string;
   mode: "shrink" | "wrap";
   align?: "left" | "center";
   leading?: number;
@@ -311,7 +313,7 @@ function measureText(
   ctx: CanvasRenderingContext2D,
   t: string,
   w: number,
-  args: any
+  args: TextArgs
 ) {
   return text(ctx, t, { x: 0, y: 0, w }, { ...args, measureOnly: true });
 }
@@ -322,7 +324,7 @@ function text(
   { x, y, w }: Omit<Rect, "h">,
   {
     fontSize = 15,
-    font = "Roboto",
+    font = (s: number) => `${s}px Roboto`,
     align = "left",
     mode = "shrink",
     leading = 0,
@@ -334,10 +336,10 @@ function text(
   }
 
   if (typeof font !== "function") {
-    let family = font;
+    const family = font;
     font = (s: number) => `${s}px ${family}`;
   }
-  let l = align === "center" ? w / 2 : 0;
+  const l = align === "center" ? w / 2 : 0;
   ctx.textBaseline = "alphabetic"; // pretty consistent across browsers
   ctx.textAlign = align === "center" ? "center" : "left";
   let actualW = 0,
@@ -350,9 +352,9 @@ function text(
     let firstLine = true;
     while (pieces.length) {
       for (let n = pieces.length; n >= 1; n--) {
-        let s = pieces.slice(0, n).join("");
-        let fm = ctx.measureText("A");
-        let tm = ctx.measureText(s);
+        const s = pieces.slice(0, n).join("");
+        const fm = ctx.measureText("A");
+        const tm = ctx.measureText(s);
         if (tm.width <= w || n === 1) {
           if (!firstLine) {
             yy += leading || 0;
@@ -372,8 +374,8 @@ function text(
     // shrink (single line)
     while (fontSize > 5) {
       ctx.font = font(fontSize);
-      let fm = ctx.measureText("A");
-      let tm = ctx.measureText(text);
+      const fm = ctx.measureText("A");
+      const tm = ctx.measureText(text);
       if (tm.width <= w) {
         !measureOnly &&
           ctx.fillText(text, x + l, y + fm.actualBoundingBoxAscent);

@@ -10,14 +10,14 @@ export const TRIGGER_KEYS = new Set([
 ]);
 
 export function useKeyboardMode(el: HTMLElement, className: string) {
-  let [keyboardMode, setKeyboardMode] = useState(false);
+  const [keyboardMode, setKeyboardMode] = useState(false);
 
   useEffect(() => {
-    let mouseListener_ = () => {
+    const mouseListener_ = () => {
       setKeyboardMode(false);
     };
 
-    let keyListener_ = (ev: KeyboardEvent) => {
+    const keyListener_ = (ev: KeyboardEvent) => {
       if (TRIGGER_KEYS.has(ev.key)) {
         setKeyboardMode(true);
       }

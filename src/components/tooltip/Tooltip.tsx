@@ -3,7 +3,9 @@ import {
   Children,
   cloneElement,
   FC,
+  ReactElement,
   ReactEventHandler,
+  SyntheticEvent,
   useEffect,
   useState,
 } from "react";
@@ -12,7 +14,7 @@ import { useModalRootNode } from "../../useModalRootNode";
 import styles from "./Tooltip.module.scss";
 
 interface TooltipProps {
-  children: any;
+  children: ReactElement;
   tooltip: string;
   className?: string;
   onShow?: () => void;
@@ -32,16 +34,16 @@ export const Tooltip: FC<TooltipProps> = ({
   children,
 }) => {
   const [coords, setCoords] = useState<Coords>();
-  let [openState, setOpenState] = useState(false);
-  let modalRoot = useModalRootNode();
+  const [openState, setOpenState] = useState(false);
+  const modalRoot = useModalRootNode();
 
   useEffect(() => {
     setOpenState(true);
   }, []);
 
   const showTooltip: ReactEventHandler<HTMLElement> = (ev) => {
-    let v = ev.currentTarget.getBoundingClientRect();
-    let newCoords = {
+    const v = ev.currentTarget.getBoundingClientRect();
+    const newCoords = {
       left: (v.left + v.right) / 2,
       top: v.bottom,
     };
@@ -56,13 +58,19 @@ export const Tooltip: FC<TooltipProps> = ({
         (child) =>
           child &&
           cloneElement(child, {
-            onMouseEnter: (event, ...args) => {
+            onMouseEnter: (
+              event: SyntheticEvent<HTMLElement, Event>,
+              ...args: unknown[]
+            ) => {
               child.props.onMouseMove &&
                 child.props.onMouseMove(event, ...args);
               showTooltip(event);
               onShow && onShow();
             },
-            onMouseLeave: (event, ...args) => {
+            onMouseLeave: (
+              event: SyntheticEvent<HTMLElement, Event>,
+              ...args: unknown[]
+            ) => {
               child.props.onMouseMove &&
                 child.props.onMouseLeave(event, ...args);
               setOpenState(false);

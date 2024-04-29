@@ -15,16 +15,16 @@ export const ClipartField: FC<ClipartFieldProps> = ({
   effectiveValue,
   onValue,
 }) => {
-  let [filter, setFilter] = useState("");
-  let [focusedItem, setFocusedItem] = useState<string | null>(
+  const [filter, setFilter] = useState("");
+  const [focusedItem, setFocusedItem] = useState<string | null>(
     ICON_SETS.default.inventory[0]
   );
 
-  let { set: effectiveSet, icon: effectiveIcon } = effectiveValue || {};
+  let { set: effectiveSet } = effectiveValue || {};
+  const { icon: effectiveIcon } = effectiveValue || {};
   effectiveSet = effectiveSet || "default";
-  let iconSetInfo = ICON_SETS[effectiveSet as keyof typeof ICON_SETS];
-
-  let filteredClipartNames = useMemo(
+  const iconSetInfo = ICON_SETS[effectiveSet as keyof typeof ICON_SETS];
+  const filteredClipartNames = useMemo(
     () =>
       iconSetInfo.inventory.filter(
         (name) =>
@@ -43,25 +43,25 @@ export const ClipartField: FC<ClipartFieldProps> = ({
     }
   }, [filteredClipartNames, effectiveIcon]);
 
-  let handleIconKeyDown: KeyboardEventHandler<HTMLButtonElement> = (ev) => {
+  const handleIconKeyDown: KeyboardEventHandler<HTMLButtonElement> = (ev) => {
     switch (ev.key) {
       case "ArrowLeft":
       case "ArrowRight": {
-        let n = ev.currentTarget;
-        let sibling =
-          ev.key === "ArrowLeft" ? n.previousSibling : n.nextSibling;
+        const sibling =
+          ev.key === "ArrowLeft"
+            ? ev.currentTarget.previousSibling
+            : ev.currentTarget.nextSibling;
         if (sibling && sibling instanceof HTMLElement) sibling.focus();
         ev.preventDefault();
         break;
       }
       case "ArrowUp":
       case "ArrowDown": {
-        let n = ev.currentTarget;
-        let nr = n.getBoundingClientRect();
-        let centerX = (nr.left + nr.right) / 2;
-        let sibling = n;
-        while (true) {
-          let nextSibling =
+        const nr = ev.currentTarget.getBoundingClientRect();
+        const centerX = (nr.left + nr.right) / 2;
+        let sibling = ev.currentTarget;
+        for (;;) {
+          const nextSibling =
             ev.key === "ArrowUp"
               ? sibling.previousSibling
               : sibling.nextSibling;
@@ -70,7 +70,7 @@ export const ClipartField: FC<ClipartFieldProps> = ({
             break;
           }
           sibling = nextSibling as HTMLButtonElement;
-          let sr = sibling.getBoundingClientRect();
+          const sr = sibling.getBoundingClientRect();
           if (sr.left <= centerX && centerX <= sr.right) {
             sibling.focus();
             break;

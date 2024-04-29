@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "lint": "eslint src",
     "build:docker": "vite build && docker build -t ghcr.io/ryan-willis/icon-workshop:latest .",
     "publish:docker": "docker push ghcr.io/ryan-willis/icon-workshop:latest",
     "preview": "vite preview",
@@ -44,6 +45,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
+    "@eslint/js": "^9.1.1",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.75",
     "@types/react-color": "^3.0.12",
@@ -52,6 +54,10 @@
     "@types/tinycolor2": "^1.4.6",
     "@types/webfontloader": "^1.6.38",
     "@vitejs/plugin-react-swc": "^3.6.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "globals": "^15.1.0",
+    "typescript-eslint": "^7.7.1",
     "vite": "^5.2.8"
   }
 }

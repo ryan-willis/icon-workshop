@@ -1,5 +1,13 @@
 import cn from "classnames";
-import { Children, FC, useLayoutEffect, useMemo, useState } from "react";
+import React, {
+  Children,
+  FC,
+  MutableRefObject,
+  ReactElement,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import styles from "./ScrollEdges.module.scss";
 
 interface EdgeClassnames {
@@ -14,19 +22,19 @@ const WIGGLE_ROOM = 2;
 interface ScrollEdgesProps {
   className?: string;
   edgeClassNames?: EdgeClassnames;
-  children: any;
+  children: typeof ScrollEdges.Content | (typeof ScrollEdges.Content)[];
 }
 
 export const ScrollEdges: FC<ScrollEdgesProps> & {
-  Content: FC<any>;
+  Content: FC;
 } = ({ className, edgeClassNames = {}, children, ...props }) => {
-  let [atLeft, setAtLeft] = useState(false);
-  let [atTop, setAtTop] = useState(false);
-  let [atRight, setAtRight] = useState(false);
-  let [atBottom, setAtBottom] = useState(false);
-  let [contentEl, setContentEl] = useState<HTMLDivElement | null>(null);
+  const [atLeft, setAtLeft] = useState(false);
+  const [atTop, setAtTop] = useState(false);
+  const [atRight, setAtRight] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
+  const [contentEl, setContentEl] = useState<HTMLDivElement | null>(null);
 
-  let {
+  const {
     left: cnLeft,
     top: cnTop,
     right: cnRight,
@@ -77,41 +85,50 @@ export const ScrollEdges: FC<ScrollEdgesProps> & {
       {!atBottom && !!cnBottom && (
         <div className={cn(cnBottom, styles.bottom)} />
       )}
-      {Children.map(children, (child) => {
-        if (child && child.type === ScrollEdges.Content) {
-          return (
-            <div
-              {...child.props}
-              className={cn(child.props.className, styles.content)}
-              ref={(node) => {
-                bubbleRef(child.ref, node);
-                setContentEl(node!);
-                node && updateStates(node);
-              }}
-              onScroll={(event, ...args) => {
-                child.props.onScroll && child.props.onScroll(event, ...args);
-                updateStates(event.currentTarget);
-              }}
-            />
-          );
-        }
+      {Children.map(
+        children as unknown as ReactElement & {
+          ref: MutableRefObject<HTMLDivElement>;
+        },
+        (child) => {
+          if (child && child.type === ScrollEdges.Content) {
+            return (
+              <div
+                {...child.props}
+                className={cn(child.props.className, styles.content)}
+                ref={(node) => {
+                  bubbleRef(child.ref, node);
+                  setContentEl(node!);
+                  node && updateStates(node);
+                }}
+                onScroll={(event, ...args) => {
+                  child.props.onScroll && child.props.onScroll(event, ...args);
+                  updateStates(event.currentTarget);
+                }}
+              />
+            );
+          }
 
-        return child;
-      })}
+          return child;
+        }
+      )}
     </div>
   );
 };
 
-// register-only
-ScrollEdges.Content = () => null;
+function None() {
+  return null;
+}
+ScrollEdges.Content = None;
 
 function bubbleRef(
-  ref: React.MutableRefObject<HTMLDivElement> | Function,
+  ref:
+    | React.MutableRefObject<HTMLDivElement>
+    | ((node: HTMLDivElement | null) => void),
   current: HTMLDivElement | null
 ) {
   if (typeof ref === "function") {
     ref(current);
-  } else if (!!ref) {
+  } else if (ref) {
     ref.current = current!;
   }
 }

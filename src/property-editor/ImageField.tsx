@@ -9,6 +9,7 @@ import {
 } from "react";
 import { DocumentContext } from "../DocumentContext";
 import styles from "./ImageField.module.scss";
+import { Property } from "../imagelib/types";
 
 interface ImageValue {
   svg: boolean;
@@ -17,9 +18,15 @@ interface ImageValue {
   filterBlobs: boolean;
 }
 
+type PreviewFit = "contain" | "cover";
+
 interface ImageFieldProps {
   fieldId: string;
-  property: any;
+  property: Property & {
+    previewFit: PreviewFit | (() => PreviewFit);
+    overlaySvg?: string;
+    instructions?: string;
+  };
   value: ImageValue;
   onValue: (value: ImageValue) => void;
 }
@@ -30,19 +37,19 @@ export const ImageField: FC<ImageFieldProps> = ({
   value,
   onValue,
 }) => {
-  let { values } = useContext(DocumentContext);
-  let elRef = useRef<HTMLDivElement>(null);
-  let [dropHover, setDropHover] = useState(false);
-  let [capturePaste, setCapturePaste] = useState(false);
+  const { values } = useContext(DocumentContext);
+  const elRef = useRef<HTMLDivElement>(null);
+  const [dropHover, setDropHover] = useState(false);
+  const [capturePaste, setCapturePaste] = useState(false);
 
-  let loadFromFileList = useCallback(
+  const loadFromFileList = useCallback(
     async (fileList: FileList) => {
       fileList = fileList || [];
       if (!fileList.length) {
         return;
       }
 
-      let file: File = Array.from(fileList).find((file) =>
+      const file: File = Array.from(fileList).find((file) =>
         isValidImageFile(file)
       )!;
       if (!file) {
@@ -50,7 +57,7 @@ export const ImageField: FC<ImageFieldProps> = ({
         return;
       }
 
-      let url = window.URL.createObjectURL(file);
+      const url = window.URL.createObjectURL(file);
       if (value?.url) {
         // revoke previous
         window.URL.revokeObjectURL(value?.url);
@@ -67,30 +74,30 @@ export const ImageField: FC<ImageFieldProps> = ({
   );
 
   useEffect(() => {
-    let el = elRef.current;
+    const el = elRef.current;
     if (!el) {
       return;
     }
 
     let timeout: NodeJS.Timeout;
 
-    let onDragEnter = () => {
+    const onDragEnter = () => {
       timeout && clearTimeout(timeout);
       setDropHover(true);
     };
 
-    let onDragLeave = () => {
+    const onDragLeave = () => {
       timeout && clearTimeout(timeout);
       timeout = setTimeout(() => setDropHover(false));
     };
 
-    let onDragOver = (ev: DragEvent) => {
+    const onDragOver = (ev: DragEvent) => {
       timeout && clearTimeout(timeout);
       ev.preventDefault();
       ev.dataTransfer!.dropEffect = "copy";
     };
 
-    let onDrop = (ev: DragEvent) => {
+    const onDrop = (ev: DragEvent) => {
       setDropHover(false);
       ev.stopPropagation();
       ev.preventDefault();
@@ -114,17 +121,17 @@ export const ImageField: FC<ImageFieldProps> = ({
       return;
     }
 
-    let handler = (ev: ClipboardEvent) => {
-      let clipboardData: DataTransfer = ev.clipboardData!;
+    const handler = (ev: ClipboardEvent) => {
+      const clipboardData: DataTransfer = ev.clipboardData!;
       if (clipboardData.files && clipboardData.files.length) {
         loadFromFileList(clipboardData.files);
       } else {
-        let textItem = Array.from(clipboardData.items).find(
+        const textItem = Array.from(clipboardData.items).find(
           ({ type }) => type === "text/plain"
         );
         if (textItem) {
           textItem.getAsString((str) => {
-            let file = new File([str], "svg.svg", { type: "image/svg+xml" });
+            const file = new File([str], "svg.svg", { type: "image/svg+xml" });
             loadFromFileList([file] as unknown as FileList);
           });
         }
@@ -135,7 +142,8 @@ export const ImageField: FC<ImageFieldProps> = ({
     return () => window.removeEventListener("paste", handler);
   }, [capturePaste, loadFromFileList]);
 
-  let objectFit = property.previewFit;
+  // @ts-expect-error - TS doesn't know about ObjectFit
+  let objectFit: ObjectFit = "contain";
   if (typeof property.previewFit === "function") {
     objectFit = property.previewFit(values);
   } else {

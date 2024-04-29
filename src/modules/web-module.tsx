@@ -29,13 +29,13 @@ export const WebModule = new (class extends BaseModule {
   async generatePreview(
     context: GenerateContext
   ): Promise<{ [id: string]: string }> {
-    let { bgShape } = context.values;
+    const { bgShape } = context.values;
     let shape = bgShape;
     if (bgShape === "square") {
       shape = roundRectPath({ x: 0, y: 0, w: 1, h: 1 }, 4 / 16);
     }
 
-    let [favicon16, favicon32, appleTouchIcon] = await Promise.all([
+    const [favicon16, favicon32, appleTouchIcon] = await Promise.all([
       renderAppIcon(context, {
         assetSize: { w: 16, h: 16 },
         shape: shape!,
@@ -50,7 +50,7 @@ export const WebModule = new (class extends BaseModule {
       }),
     ]);
 
-    let preview = makeContext({
+    const preview = makeContext({
       w: 228,
       h: 180,
     });
@@ -67,7 +67,20 @@ export const WebModule = new (class extends BaseModule {
     };
   }
 
-  renderPreview({ favicon16, appleTouchIcon }: any, { darkTheme }: any) {
+  renderPreview(
+    {
+      favicon16,
+      appleTouchIcon,
+    }: {
+      favicon16: string;
+      appleTouchIcon: string;
+    },
+    {
+      darkTheme,
+    }: {
+      darkTheme: boolean;
+    }
+  ) {
     return (
       <ShrinkToFit>
         <ImageOverlays
@@ -110,13 +123,13 @@ export const WebModule = new (class extends BaseModule {
   }
 
   async generateArtifacts(context: GenerateContext): Promise<Artifact[]> {
-    let { bgShape } = context.values;
+    const { bgShape } = context.values;
     let shape = bgShape;
     if (bgShape === "square") {
       shape = roundRectPath({ x: 0, y: 0, w: 1, h: 1 }, 4 / 16);
     }
 
-    let [
+    const [
       favicon16,
       favicon32,
       appleTouchIcon,
@@ -159,7 +172,7 @@ export const WebModule = new (class extends BaseModule {
       }),
     ]);
 
-    let icoBlob = makeIco([favicon16.canvas, favicon32.canvas]);
+    const icoBlob = makeIco([favicon16.canvas, favicon32.canvas]);
 
     return [
       {

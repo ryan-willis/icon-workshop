@@ -38,24 +38,25 @@ export async function renderAppIcon(
   }: RenderConfig
 ): Promise<CanvasRenderingContext2D> {
   // let foreSrcCtx = values.foreground ? values.foreground.ctx : null;
-  let foreSrcCtx = await renderForeground({ values }, assetSize);
-  let { fgType, fgMask, bgType, bgGradient, fgEffects, fgPadding } = values;
+  const foreSrcCtx = await renderForeground({ values }, assetSize);
+  const { fgType, fgMask, bgType, bgGradient, fgPadding } = values;
+  let { fgEffects } = values;
   let bgColor = tinycolor(values.bgColor); // TODO: the system should automatically tinycolor() this
   let fgColor = tinycolor(values.fgColor);
   if (androidMonochrome) {
     fgColor = tinycolor("#000");
     fgEffects = null;
   }
-  let crop = fgType === "image" && values.fgScaling === "crop";
+  const crop = fgType === "image" && values.fgScaling === "crop";
 
   contentSize = contentSize || assetSize;
-  let targetRect: Rect = {
+  const targetRect: Rect = {
     x: (assetSize.w - contentSize.w) / 2,
     y: (assetSize.h - contentSize.h) / 2,
     ...contentSize,
   };
 
-  let outCtx = makeContext(assetSize);
+  const outCtx = makeContext(assetSize);
 
   let bgLayerEffects: Effect[] = [];
   if (bgType === "color") {
@@ -66,7 +67,7 @@ export async function renderAppIcon(
       },
     ];
   } else if (bgType === "gradient") {
-    let { color1, color2, angle }: GradientValue = bgGradient!;
+    const { color1, color2, angle }: GradientValue = bgGradient!;
     bgColor = tinycolor(color1);
     bgLayerEffects = [
       {
@@ -91,7 +92,7 @@ export async function renderAppIcon(
     ];
   }
 
-  let backgroundLayer: Layer = {
+  const backgroundLayer: Layer = {
     // background layer
     draw: (ctx) => {
       bgColor.setAlpha(1);
@@ -125,14 +126,14 @@ export async function renderAppIcon(
     effects: bgLayerEffects,
   };
 
-  let foregroundLayer: Layer = {
+  const foregroundLayer: Layer = {
     // foreground content layer
     draw: (ctx) => {
       if (!foreSrcCtx) {
         return;
       }
 
-      let contentRect = { ...targetRect };
+      const contentRect = { ...targetRect };
       if (fgPadding) {
         contentRect.y += (fgPadding.top / 100) * targetRect.h;
         contentRect.x += (fgPadding.left / 100) * targetRect.w;
@@ -149,8 +150,8 @@ export async function renderAppIcon(
       //   contentRect.h -= 10 * scale;
       // }
 
-      let drawFn_ = crop ? drawCenterCrop : drawCenterInside;
-      drawFn_(ctx, foreSrcCtx, contentRect, {
+      const drawFn_ = crop ? drawCenterCrop : drawCenterInside;
+      drawFn_(ctx, foreSrcCtx.canvas, contentRect, {
         x: 0,
         y: 0,
         w: foreSrcCtx.canvas.width,
@@ -173,7 +174,7 @@ export async function renderAppIcon(
   }
 
   if (fgEffects === "elevate" || fgEffects === "shadow") {
-    let scale = contentSize.w / 48;
+    const scale = contentSize.w / 48;
     foregroundLayer.effects = [
       ...foregroundLayer.effects!,
       {
@@ -193,11 +194,11 @@ export async function renderAppIcon(
   let bgImageLayer: Layer | null = null;
   let bgImg: HTMLImageElement;
   if (bgType === "image") {
-    let { url } = values.bgImage || {};
+    const { url } = values.bgImage || {};
     if (url) {
       bgImg = await loadImageFromUri(url);
       // use the middle 2/3 of the image (because of android adaptive icons)
-      let bgTargetRect = {
+      const bgTargetRect = {
         x: targetRect.x - targetRect.w / 4,
         y: targetRect.y - targetRect.h / 4,
         w: (targetRect.w * 3) / 2,
@@ -241,12 +242,12 @@ export async function renderAppIcon(
               badge = badge.split("").join(String.fromCharCode(0x2006));
             }
             ctx.font = `700 ${5 * scale}px Inter`;
-            let fm = ctx.measureText(badge);
-            let badgeTextColor = tinycolor
+            const fm = ctx.measureText(badge);
+            const badgeTextColor = tinycolor
               .mostReadable(badgeColor, ["#fff", "#444"])
               .toRgbString();
             if (badgeStyle === "default") {
-              let badgeHeight = (shape === "circle" ? 12 : 10) * scale;
+              const badgeHeight = (shape === "circle" ? 12 : 10) * scale;
               ctx.fillStyle = badgeColor.toRgbString();
               ctx.fillRect(
                 0,
@@ -267,8 +268,8 @@ export async function renderAppIcon(
                   fm.actualBoundingBoxAscent
               );
             } else if (badgeStyle === "side") {
-              let badgeHeight = 9 * scale;
-              let badgeWidth = fm.width + 10 * scale;
+              const badgeHeight = 9 * scale;
+              const badgeWidth = fm.width + 10 * scale;
               ctx.fillStyle = badgeColor.toRgbString();
               ctx.fill(
                 roundRectPath(
@@ -315,21 +316,22 @@ async function renderForeground(
   { values }: GenerateContext,
   maxFinalSize?: Size
 ): Promise<CanvasRenderingContext2D | null> {
-  let { fgType, fgColor } = values;
+  const { fgType } = values;
+  let { fgColor } = values;
   fgColor = tinycolor(fgColor);
 
   switch (fgType) {
     case "image": {
-      let { url, svg } = values.fgImage || {};
+      const { url, svg } = values.fgImage || {};
       if (!url) {
         return null;
       }
-      let img = await loadImageFromUri(url);
-      let origSize: Size = {
+      const img = await loadImageFromUri(url);
+      const origSize: Size = {
         w: img.naturalWidth,
         h: img.naturalHeight,
       };
-      let size = { ...origSize };
+      const size = { ...origSize };
       if (svg && maxFinalSize) {
         if (size.w / size.h > maxFinalSize.w / maxFinalSize.h) {
           size.w = maxFinalSize.w;
@@ -339,7 +341,7 @@ async function renderForeground(
           size.w = (size.h * origSize.w) / origSize.h;
         }
       }
-      let ctx = makeContext(size);
+      const ctx = makeContext(size);
       // don't specify source width and height because it breaks
       // SVGs that don't have a width or height set (i.e. viewbox only)
       // and is irrelevant for PNGs
@@ -355,13 +357,13 @@ async function renderForeground(
     }
 
     case "clipart": {
-      let size = { w: 1536, h: 1536 };
-      let { icon, set } = values.fgClipart!;
-      let iconSetInfo = ICON_SETS[set || "default"];
+      const size = { w: 1536, h: 1536 };
+      const { icon, set } = values.fgClipart!;
+      const iconSetInfo = ICON_SETS[set || "default"];
 
       await tryLoadWebFont(iconSetInfo.family);
 
-      let ctx = makeContext(size);
+      const ctx = makeContext(size);
       ctx.fillStyle = "#000";
       ctx.font = `${size.h}px/${size.h}px '${iconSetInfo.family}'`;
       ctx.textBaseline = "alphabetic";
@@ -370,18 +372,18 @@ async function renderForeground(
     }
 
     case "text": {
-      let size = { w: 6144, h: 1536 };
-      let textHeight = size.h * 0.75;
+      const size = { w: 6144, h: 1536 };
+      const textHeight = size.h * 0.75;
+      const text = ` ${values.fgText} `;
+      const font: FontValue = values.fgFont!;
       let ctx = makeContext(size);
-      let text = ` ${values.fgText} `;
-      let font: FontValue = values.fgFont!;
 
       await tryLoadWebFont(font.family, {
         bold: font.bold,
         italic: font.italic,
       });
 
-      let setupCanvas_ = () => {
+      const setupCanvas_ = () => {
         ctx.fillStyle = fgColor.toHexString();
         ctx.font = `
           ${font.italic ? "italic" : ""}

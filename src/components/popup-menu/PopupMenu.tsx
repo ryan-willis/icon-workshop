@@ -1,11 +1,11 @@
 import cn from "classnames";
-import { FC, useRef } from "react";
+import { FC, ReactElement, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useModalRootNode } from "../../useModalRootNode";
 import styles from "./PopupMenu.module.scss";
 
 interface PopupMenuProps {
-  children: any;
+  children: ReactElement;
   show: boolean;
   left?: number;
   top?: number;
@@ -23,8 +23,8 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   right,
   onClose,
 }) => {
-  let modalRoot = useModalRootNode();
-  let blurTimeout = useRef<NodeJS.Timeout>();
+  const modalRoot = useModalRootNode();
+  const blurTimeout = useRef<NodeJS.Timeout>();
 
   return (
     <>
@@ -45,7 +45,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
                 n &&
                   !n.contains(document.activeElement) &&
                   setTimeout(() => {
-                    let btn: HTMLButtonElement | null = n.querySelector(
+                    const btn: HTMLButtonElement | null = n.querySelector(
                       "button:not([disabled])"
                     );
                     if (btn) {
@@ -85,27 +85,24 @@ export const MenuItem: FC<MenuItemProps> = ({
   disabled,
 }) => {
   return (
-    <li
-    // disabled={!!disabled}
-    >
+    <li>
       <button
         className={cn(className, styles.item)}
         disabled={!!disabled}
         onPointerDown={(ev) => {
           // For Safari... force focus on mousedown
-          let ct = ev.currentTarget;
-          setTimeout(() => ct.focus());
+          setTimeout(() => ev.currentTarget.focus());
         }}
         onKeyDown={(ev) => {
           if (ev.code === "ArrowUp" || ev.code === "ArrowDown") {
-            let next = ev.code === "ArrowDown";
-            let li = ev.currentTarget.closest("li");
-            let items = [
+            const next = ev.code === "ArrowDown";
+            const li = ev.currentTarget.closest("li");
+            const items = [
               ...ev.currentTarget
                 .closest("ul")!
                 .querySelectorAll("li:not([disabled])"),
             ];
-            let idx =
+            const idx =
               (items.indexOf(li as Element) + (next ? 1 : -1) + items.length) %
               items.length;
             items[idx]?.querySelector("button")?.focus();

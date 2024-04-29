@@ -37,11 +37,15 @@ export function fx(
 ) {
   effects = effects || [];
 
-  let outerEffects = effects.filter((e) => !!e && OUTER_EFFECTS.has(e.effect));
-  let innerEffects = effects.filter((e) => !!e && INNER_EFFECTS.has(e.effect));
-  let fillEffects = effects.filter((e) => !!e && FILL_EFFECTS.has(e.effect));
+  const outerEffects = effects.filter(
+    (e) => !!e && OUTER_EFFECTS.has(e.effect)
+  );
+  const innerEffects = effects.filter(
+    (e) => !!e && INNER_EFFECTS.has(e.effect)
+  );
+  const fillEffects = effects.filter((e) => !!e && FILL_EFFECTS.has(e.effect));
 
-  let tmpCtx: CanvasRenderingContext2D, bufferCtx: CanvasRenderingContext2D;
+  let tmpCtx: CanvasRenderingContext2D;
 
   // First render outer effects
   let padLeft: number, padRight: number, padBottom: number, padTop: number;
@@ -81,8 +85,8 @@ export function fx(
         break;
 
       case "outer-shadow":
-        let tColor = tinycolor(effect.color || "#000");
-        let alpha = tColor.getAlpha();
+        const tColor = tinycolor(effect.color || "#000");
+        const alpha = tColor.getAlpha();
         tColor.setAlpha(1);
 
         if (SUPPORTS_CANVAS_FILTERS) {
@@ -133,7 +137,7 @@ export function fx(
 
   // Next, render the source, fill effects (first one), and inner effects
   // in a buffer (bufferCtx)
-  bufferCtx = makeContext(size);
+  const bufferCtx = makeContext(size);
   tmpCtx = makeContext(size);
   tmpCtx.drawImage("canvas" in src ? src.canvas : src, 0, 0);
   tmpCtx.globalCompositeOperation = "source-atop";
@@ -152,7 +156,7 @@ export function fx(
       }
 
       case "fill-lineargradient": {
-        let gradient = tmpCtx.createLinearGradient(
+        const gradient = tmpCtx.createLinearGradient(
           effect.fromX,
           effect.fromY,
           effect.toX,
@@ -166,7 +170,7 @@ export function fx(
       }
 
       case "fill-radialgradient": {
-        let gradient = tmpCtx.createRadialGradient(
+        const gradient = tmpCtx.createRadialGradient(
           effect.centerX,
           effect.centerY,
           0,
@@ -197,9 +201,9 @@ export function fx(
   // Render inner effects
   padLeft = padTop = padRight = padBottom = 0;
   innerEffects.forEach((effect) => {
-    let blur = "blur" in effect ? effect.blur || 0 : 0;
-    let translateX = "translateX" in effect ? effect.translateX || 0 : 0;
-    let translateY = "translateY" in effect ? effect.translateY || 0 : 0;
+    const blur = "blur" in effect ? effect.blur || 0 : 0;
+    const translateX = "translateX" in effect ? effect.translateX || 0 : 0;
+    const translateY = "translateY" in effect ? effect.translateY || 0 : 0;
     padLeft = Math.max(padLeft, blur + Math.max(0, translateX));
     padTop = Math.max(padTop, blur + Math.max(0, translateY));
     padRight = Math.max(padRight, blur + Math.max(0, -translateX));
@@ -260,7 +264,7 @@ function renderCastShadow_(
   w: number,
   h: number
 ) {
-  let tmpCtx = makeContext({ w, h });
+  const tmpCtx = makeContext({ w, h });
   // render the cast shadow
   for (let o = 1; o < Math.max(w, h); o++) {
     tmpCtx.drawImage(ctx.canvas, o, o);
@@ -268,7 +272,7 @@ function renderCastShadow_(
   tmpCtx.globalCompositeOperation = "source-in";
   tmpCtx.fillStyle = "#000";
   tmpCtx.fillRect(0, 0, w, h);
-  let gradient = tmpCtx.createLinearGradient(0, 0, w, h);
+  const gradient = tmpCtx.createLinearGradient(0, 0, w, h);
   gradient.addColorStop(0, "rgba(0, 0, 0, .2)");
   gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
   tmpCtx.fillStyle = gradient;
