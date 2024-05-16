@@ -1,4 +1,6 @@
 **dist/
 .vscode/
 .DS_*
+.env*
+!.env.local
 node_modules/
