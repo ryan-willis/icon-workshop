@@ -11,7 +11,7 @@
     "build:docker": "vite build && docker build -t ghcr.io/ryan-willis/icon-workshop:latest .",
     "publish:docker": "docker push ghcr.io/ryan-willis/icon-workshop:latest",
     "preview": "vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "type-check": "tsc --noEmit"
   },
   "repository": {
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.1.1",
+    "@fiahfy/packbits": "^0.0.6",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.75",
     "@types/react-color": "^3.0.12",
@@ -58,6 +59,7 @@
     "eslint-plugin-react": "^7.34.1",
     "globals": "^15.1.0",
     "typescript-eslint": "^7.7.1",
-    "vite": "^5.2.8"
+    "vite": "^5.2.8",
+    "vitest": "^1.6.0"
   }
 }

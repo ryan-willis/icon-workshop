@@ -35,16 +35,61 @@ export async function generateZip(artifacts: Artifact[]): Promise<Blob> {
   return await zip.generateAsync({ type: "blob" });
 }
 
-// export function debounce<T>(delay: number, fn: (...args: T[]) => void) {
-//   let timeout: NodeJS.Timeout | null;
+export function packBits(data: Uint8ClampedArray): Uint8ClampedArray {
+  const packed: Uint8ClampedArray[] = [];
 
-//   return (...args: T[]) => {
-//     if (timeout) {
-//       clearTimeout(timeout);
-//     }
-//     timeout = setTimeout(() => {
-//       fn(...args);
-//       timeout = null;
-//     }, delay);
-//   };
-// }
+  let i = 0;
+  while (i < data.length) {
+    const byte = data[i];
+    // if last 1 or 2 bytes remaining
+    if (i + 2 >= data.length) {
+      const length = data.length - i;
+      const arr = new Uint8ClampedArray([length - 1]);
+      packed.push(arr);
+      packed.push(data.slice(i, data.length));
+      break;
+    }
+
+    const repeat = byte === data[i + 1] && byte === data[i + 2];
+    if (repeat) {
+      let j = i + 2;
+      let length = 3;
+      while (++j < data.length && byte === data[j] && length < 130) {
+        length++;
+      }
+      const arr = new Uint8ClampedArray([length + 125, byte]);
+      packed.push(arr);
+      i = j;
+    } else {
+      let j = i + 2;
+      let length = 3;
+      let prev = data[j];
+      let repeatLength = 1;
+      while (++j < data.length && length < 128) {
+        if (prev === data[j]) {
+          if (++repeatLength > 2) {
+            break;
+          }
+        } else {
+          prev = data[j];
+          repeatLength = 1;
+        }
+        length++;
+      }
+      if (repeatLength > 2) {
+        j -= 2;
+        length -= 2;
+      }
+      const arr = new Uint8ClampedArray([length - 1]);
+      packed.push(arr);
+      packed.push(data.slice(i, j));
+      i = j;
+    }
+  }
+
+  return Uint8ClampedArray.from(flattenArray(packed));
+}
+
+export function flattenArray(arr: any) {
+  return arr.reduce((a: any[], b: any[]) => [...a, ...b], []);
+}
