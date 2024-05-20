@@ -67,7 +67,7 @@ export const MacosModule = new (class extends BaseModule {
     context: GenerateContext
   ): Promise<{ [id: string]: string }> {
     return {
-      main: (await this.renderOne(context, 100, true)).canvas.toDataURL(),
+      main: (await this.renderOne(context, 128, true)).canvas.toDataURL(),
     };
   }
 
@@ -117,7 +117,7 @@ export const MacosModule = new (class extends BaseModule {
   async generateArtifacts(context: GenerateContext): Promise<Artifact[]> {
     const canvasPromises = Object.keys(OS_TYPES).map((s) => {
       const size = parseInt(s, 10);
-      return this.renderOne(context, size).then((ctx) => ctx.canvas);
+      return this.renderOne(context, size, true).then((ctx) => ctx.canvas);
     });
     const canvases = await Promise.all(canvasPromises);
     return [
