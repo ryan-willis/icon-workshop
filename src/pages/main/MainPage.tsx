@@ -125,6 +125,10 @@ const MainPageInner: FC = () => {
   }, [modules, activeModule]);
 
   const generateAndDownload = async () => {
+    (async () => {
+      // @ts-ignore
+      window.umami.track("download", { types: modules.map((m) => m.type) });
+    })().catch(() => void 0);
     setAnimateDownloadIcon(false);
     setGeneratingZip(true);
     try {
@@ -158,7 +162,7 @@ const MainPageInner: FC = () => {
       <Header />
       <Toolbar>
         <ModulePicker
-          activeModule={activeModule}
+          activeModule={activeModule!}
           onChange={(m) => setActiveModule(m)}
         />
         <ActionPack className={styles.toolbarButtons}>
